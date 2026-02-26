@@ -1,0 +1,22 @@
+<!-- 
+<div class="admin-layout-container" [class.sidebar-collapsed]="isCollapsed">
+<app-adminsidebar (collapseChange)="onSidebarCollapseChange($event)"></app-adminsidebar>
+  <main class="main-content">
+    <app-adminheader></app-adminheader>
+  <router-outlet></router-outlet>
+  </main>
+  <footer>
+    <app-adminfooter></app-adminfooter>
+  </footer>
+</div> -->
+<div class="admin-layout-container" [class.sidebar-collapsed]="isCollapsed">
+  
+  <app-adminsidebar
+  (collapseChange)="onSidebarCollapseChange($event)">
+</app-adminsidebar>
+
+<main class="main-content">
+    <app-adminheader></app-adminheader>
+    <router-outlet></router-outlet>
+  </main>
+</div>
