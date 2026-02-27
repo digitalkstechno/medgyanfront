@@ -12,9 +12,14 @@ export class StudentService {
 
   studentapi = `${environment.baseurl}user`
 
-  getStudent():Observable<any>{
-    return this.http.get(`${this.studentapi}`)
-  }
+ 
+
+  // student.service.ts
+getStudent(page = 1, limit = 10, filters: any = {}) {
+  const params: any = { page, limit, ...filters };
+  return this.http.get<any>(`${this.studentapi}`, { params });
+}
+
   getStudentbyId(studentId : string):Observable<any>{
     return this.http.get(`${this.studentapi}${studentId}`)
   }

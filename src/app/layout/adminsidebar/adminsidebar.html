@@ -2,8 +2,12 @@
   <!-- LOGO -->
   <div class="logo-container" routerLink="/dashboard">
     <div class="logo">
-
+      @if (isCollapsed) {
       <img src="/logo.png" alt="Hospital Logo" class="logo-image" />
+
+          } @else {
+            <img src="/logoonfull.png" alt="Hospital Logo" class="logo-image" />
+          }
     </div>
   </div>
 

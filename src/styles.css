@@ -980,9 +980,9 @@ ul li {
 
 /* Logo Styles */
 
-.sidebar.collapsed .logo-image {
+/* .sidebar.collapsed .logo-image {
   display: none;
-}
+} */
 
 .sidebar.collapsed {
   display: block;

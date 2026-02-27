@@ -11,9 +11,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrl: './studentlist.component.css'
 })
 export class StudentlistComponent implements OnInit {
-
-  students: any[] = [];
+students: any[] = [];
   selectedStudent: any = null;
+
+  // pagination state
+  page = 1;
+  limit = 10;
+  total = 0;
+  pages = 0;
 
   // modals
   showApproveModal = false;
@@ -29,7 +34,7 @@ export class StudentlistComponent implements OnInit {
 
   ngOnInit() {
     this.initForms();
-    this.loadstudents();
+    this.loadStudents();
   }
 
   initForms() {
@@ -37,26 +42,61 @@ export class StudentlistComponent implements OnInit {
       startDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       accessType: ['Standard Trial (Restricted)'],
-      notes: ['']
+      notes: [''],
     });
 
     this.extendForm = this.fb.group({
-      expiryDate: ['', Validators.required]
+      startDate: ['', Validators.required],
+      expiryDate: ['', Validators.required],
     });
   }
 
-  // ✅ load only NON super admin users
-  loadstudents() {
-    this.studentservice.getStudent().subscribe((res: any[]) => {
-      this.students = res.filter(u => !u.isSuperAdmin);
+  // ================= LOAD WITH PAGINATION =================
+  loadStudents() {
+    this.studentservice.getStudent(this.page, this.limit).subscribe((res: any) => {
+      // res = { success, message, users, pagination }
+      this.students = (res.users || []).filter((u: any) => !u.isSuperAdmin);
+
+      if (res.pagination) {
+        this.page = res.pagination.page;
+        this.limit = res.pagination.limit;
+        this.total = res.pagination.total;
+        this.pages = res.pagination.pages;
+      }
     });
+  }
+
+  // simple helpers for UI
+  canPrev(): boolean {
+    return this.page > 1;
+  }
+
+  canNext(): boolean {
+    return this.page < this.pages;
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.pages) return;
+    this.page = page;
+    this.loadStudents();
+  }
+
+  nextPage() {
+    if (!this.canNext()) return;
+    this.page++;
+    this.loadStudents();
+  }
+
+  prevPage() {
+    if (!this.canPrev()) return;
+    this.page--;
+    this.loadStudents();
   }
 
   // ================= ACTION MODAL =================
-
   openActionModal(student: any) {
     this.selectedStudent = student;
-    console.log("🚀 ~ StudentlistComponent ~ openActionModal ~  this.selectedStudent:",  this.selectedStudent)
+    console.log("🚀 ~ StudentlistComponent ~ openActionModal ~  this.selectedStuden:",  this.selectedStudent)
     this.showActionModal = true;
   }
 
@@ -65,7 +105,6 @@ export class StudentlistComponent implements OnInit {
   }
 
   // ================= APPROVE =================
-
   openApproveModal(student?: any) {
     if (student) this.selectedStudent = student;
 
@@ -82,55 +121,52 @@ export class StudentlistComponent implements OnInit {
     const payload = {
       subscription: {
         status: 'TRIAL',
-        expiresAt: this.approveForm.value.expiryDate
-      }
+        expiresAt: this.approveForm.value.expiryDate,
+        startDate: this.approveForm.value.startDate,
+      },
     };
 
     this.studentservice
       .updateStudent(this.selectedStudent._id, payload)
       .subscribe(() => {
         this.closeAllModals();
-        this.loadstudents();
+        this.loadStudents();
       });
   }
 
   // ================= EXTEND =================
-
   extendSubscription() {
     if (this.extendForm.invalid || !this.selectedStudent) return;
 
     const payload = {
       subscription: {
         status: 'ACTIVE',
-        expiresAt: this.extendForm.value.expiryDate
-      }
+        expiresAt: this.extendForm.value.expiryDate,
+      },
     };
 
     this.studentservice
       .updateStudent(this.selectedStudent._id, payload)
       .subscribe(() => {
         this.closeAllModals();
-        this.loadstudents();
+        this.loadStudents();
       });
   }
 
   // ================= DELETE =================
-
   deleteUser() {
     if (!this.selectedStudent) return;
-
     if (!confirm('Delete this user?')) return;
 
     this.studentservice
       .deleteStudent(this.selectedStudent._id)
       .subscribe(() => {
         this.closeAllModals();
-        this.loadstudents();
+        this.loadStudents();
       });
   }
 
   // ================= HELPERS =================
-
   closeAllModals() {
     this.showApproveModal = false;
     this.showActionModal = false;
@@ -142,4 +178,57 @@ export class StudentlistComponent implements OnInit {
     const diff = new Date(expiry).getTime() - new Date().getTime();
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   }
+  getExpiryLabel(expiry: string | null): string {
+  if (!expiry) return '';
+
+  const today = new Date();
+  const exp = new Date(expiry);
+
+  // normalize to midnight to avoid time zone issues
+  today.setHours(0, 0, 0, 0);
+  exp.setHours(0, 0, 0, 0);
+
+  const diffMs = exp.getTime() - today.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    return 'expires today';
+  }
+
+  if (diffDays === 1) {
+    return 'expires in 1 day';
+  }
+
+  if (diffDays > 1) {
+    return `expires in ${diffDays} days`;
+  }
+
+  // already expired
+  return `expired ${Math.abs(diffDays)} days ago`;
+}
+
+  getStartLabel(startDate: string | null): string {
+  if (!startDate) return '';
+
+  const start = new Date(startDate);
+  const today = new Date();
+
+  // normalize to midnight to avoid time-zone hour differences
+  start.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  const diffMs = today.getTime() - start.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    return `Your ${this.selectedStudent.subscription?.status} version started today`;
+  }
+
+  if (diffDays === 1) {
+    return `Your ${this.selectedStudent.subscription?.status} version started 1 day ago`;
+  }
+
+  return `Your ${this.selectedStudent.subscription?.status} version started ${diffDays} days ago`;
+}
+
 }

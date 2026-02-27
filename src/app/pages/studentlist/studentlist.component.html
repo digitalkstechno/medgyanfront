@@ -77,6 +77,18 @@
       </div>
     </div>
 
+
+  <span class="days" *ngIf="selectedStudent.subscription?.startDate">
+  {{ getStartLabel(selectedStudent.subscription?.startDate) }}
+</span>
+
+   <span> &</span>
+    <span class="days" *ngIf="selectedStudent.subscription?.expiresAt">
+  Your {{ selectedStudent.subscription?.status }} version
+  {{ getExpiryLabel(selectedStudent.subscription?.expiresAt) }}
+</span>
+
+
     <div class="action-buttons">
       <button class="action-btn extend" (click)="extendSubscription()">
         DeLink Student
