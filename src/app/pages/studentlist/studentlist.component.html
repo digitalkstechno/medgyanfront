@@ -1,0 +1,153 @@
+<div class="student-page">
+
+  <h2 class="page-title">Student Management</h2>
+
+  <!-- STUDENT LIST -->
+  <div
+    class="student-card"
+    *ngFor="let s of students"
+    (click)="openActionModal(s)"
+  >
+
+    <div class="student-header">
+      <!-- <div class="student-info"> -->
+
+
+
+        <div class="avatar">{{ s.name?.charAt(0) }}</div>
+
+          <h6 for="" class="form-label">Student Username : {{ s.userName }}</h6>
+          <p>Student Name : {{ s.name }}</p>
+          <p>Student Email: {{ s.email }}</p>
+
+
+      <!-- </div> -->
+
+      <!-- stop propagation so card click not fire -->
+      <button
+        class="approve-btn"
+        (click)="openApproveModal(s); $event.stopPropagation()"
+      >
+        Approve
+      </button>
+    </div>
+
+    <div class="student-meta">
+      <span class="badge trial" *ngIf="s.subscription?.status === 'TRIAL'">
+        Trial
+      </span>
+
+      <span class="badge active" *ngIf="s.subscription?.status === 'ACTIVE'">
+        Active
+      </span>
+
+      <span class="days" *ngIf="s.subscription?.expiresAt">
+        {{ getDaysLeft(s.subscription?.expiresAt) }} days left
+      </span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= ACTION MODAL ================= -->
+<div class="modal-backdrop" *ngIf="showActionModal">
+  <div class="modal-box small">
+    <div class="modal-header">
+      <h3>User Details</h3>
+        <i class="fa-solid fa-xmark close-icon" (click)="closeActionModal()"></i>
+    </div>
+
+    <div class="student-info">
+      <div class="avatar big">{{ selectedStudent.name?.charAt(0) }}</div>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Student Name:</label>
+          <span>{{selectedStudent.name}}</span>
+        </div>
+        <div class="info-item">
+          <label>Student Email:</label>
+          <span>{{selectedStudent.email}}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-item full-width">
+          <label>Student Device ID:</label>
+          <span>{{selectedStudent.deviceId}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="action-btn extend" (click)="extendSubscription()">
+        DeLink Student
+      </button>
+      <button class="action-btn danger" (click)="deleteUser()">
+        Delete User
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ================= APPROVE MODAL ================= -->
+<div class="modal-backdrop" *ngIf="showApproveModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <h3>Approve User</h3>
+      <button class="close-btn" (click)="closeAllModals()">✕</button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedStudent">
+
+      <div class="modal-user">
+        <div class="avatar big">
+          {{ selectedStudent.name?.charAt(0) }}
+        </div>
+
+        <div>
+          <h4>{{ selectedStudent.name }}</h4>
+          <p>{{ selectedStudent.email }}</p>
+        </div>
+      </div>
+
+      <form [formGroup]="approveForm" class="form-grid">
+
+        <div>
+          <label>Start Date</label>
+          <input type="date" formControlName="startDate" />
+        </div>
+
+        <div>
+          <label>Expiry Date *</label>
+          <input type="date" formControlName="expiryDate" />
+        </div>
+
+        <div class="full">
+          <label>Access Type</label>
+          <select formControlName="accessType">
+            <option>Standard Trial (Restricted)</option>
+            <option>Full Access</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label>Internal Notes</label>
+          <textarea formControlName="notes"></textarea>
+        </div>
+
+      </form>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closeAllModals()">Cancel</button>
+      <button class="approve-main" (click)="approveUser()">
+        Approve & Grant Access
+      </button>
+    </div>
+
+  </div>
+</div>

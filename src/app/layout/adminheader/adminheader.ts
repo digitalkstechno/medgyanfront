@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SHARED_IMPORTS } from '../../constant/shared_import';
+import { SHARED_IMPORTS } from '../../constant/shared_imports';
 
 @Component({
   selector: 'app-adminheader',

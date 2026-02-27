@@ -1,4 +1,4 @@
-<!-- 
+<!--
 <div class="admin-layout-container" [class.sidebar-collapsed]="isCollapsed">
 <app-adminsidebar (collapseChange)="onSidebarCollapseChange($event)"></app-adminsidebar>
   <main class="main-content">
@@ -10,10 +10,9 @@
   </footer>
 </div> -->
 <div class="admin-layout-container" [class.sidebar-collapsed]="isCollapsed">
-  
-  <app-adminsidebar
-  (collapseChange)="onSidebarCollapseChange($event)">
-</app-adminsidebar>
+
+ 
+<app-adminsidebar (collapseChange)="onSidebarCollapseChange($event)"></app-adminsidebar>
 
 <main class="main-content">
     <app-adminheader></app-adminheader>

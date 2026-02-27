@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostListener, Output } from '@angular/core';
-import { SHARED_IMPORTS } from '../../constant/shared_import';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { SHARED_IMPORTS } from '../../constant/shared_imports';
 
 @Component({
   selector: 'app-adminsidebar',
@@ -9,33 +9,77 @@ import { Router } from '@angular/router';
   templateUrl: './adminsidebar.html',
   styleUrl: './adminsidebar.css',
 })
-export class Adminsidebar {
+export class styAdminsidebar {
+
  logoUrl!: string;
   doctorId: string = '';
   role: string = '';
 
   isCollapsed = false;
- 
- 
-  constructor( private router : Router
-    
-  ) {}
- 
- 
-  
 
-  logout(): void {
-   this.router.navigateByUrl('/login')
+ onLogoError(event: any) {
+    event.target.src = 'DigiLogocropped-removebg-preview 1.jpg'; // fallback image
   }
- 
 
-  
+  constructor( private router : Router
 
- 
+  ) {}
 
-  
+  userRole: string | null = null;
 
-  dropdowns: {
+ logout(): void {
+  // ✅ clear auth data
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('deviceId');
+
+  // optional: clear everything
+  // localStorage.clear();
+
+  // ✅ redirect to login
+  this.router.navigateByUrl('/login');
+}
+
+  allowedModules: string[] = [];
+  ngOnInit() {
+
+
+
+  }
+
+
+  // hasAnyMasterDropdownAccess(): boolean {
+  //   const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+
+  //   const check = (module: string) =>
+  //     permissions.some((perm: any) =>
+  //       perm.moduleName === module &&
+  //       (perm.permissions?.create === 1 ||
+  //        perm.permissions?.read === 1 ||
+  //        perm.permissions?.update === 1 ||
+  //        perm.permissions?.delete === 1)
+  //     );
+
+  //   return (
+  //     check('doctor') ||
+  //     check('service') ||
+  //     check('serviceGroup') ||
+  //     check('surgeryService') ||
+  //     check('packages') ||
+  //     check('bedType') ||
+  //     check('bed') ||
+  //     check('roomType') ||
+  //     check('room') ||
+  //     check('wardMaster') ||
+  //     check('medicine') ||
+  //     check('testParameter') ||
+  //     check('testGroup') ||
+  //     check('symptoms') ||
+  //     check('symptomGroup')
+  //   );
+  // }
+
+   dropdowns: {
     opd: boolean;
     master: boolean;
     ipd: boolean;
@@ -57,7 +101,10 @@ export class Adminsidebar {
     // ...
   };
 
- 
+
+  // toggleDropdown(menu: keyof typeof this.dropdowns) {
+  //   this.dropdowns[menu] = !this.dropdowns[menu];
+  // }
 
   @Output() collapseChange = new EventEmitter<boolean>();
 
@@ -112,9 +159,44 @@ export class Adminsidebar {
 
   // logo shape
 
-  
 
- 
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
