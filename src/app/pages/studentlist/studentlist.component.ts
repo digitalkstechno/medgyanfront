@@ -107,13 +107,32 @@ students: any[] = [];
   // ================= APPROVE =================
   openApproveModal(student?: any) {
     if (student) this.selectedStudent = student;
+    console.log(
+      '🚀 ~ StudentlistComponent ~ openApproveModal ~ this.selectedStudent :',
+      this.selectedStudent
+    );
 
     this.showActionModal = false;
     this.showApproveModal = true;
 
+    const sub = this.selectedStudent?.subscription;
+
+    // convert ISO string to yyyy-MM-dd for <input type="date">
+    const formatForInput = (iso: string | null | undefined): string => {
+      if (!iso) return '';
+      return new Date(iso).toISOString().split('T')[0];
+    };
+
     const today = new Date().toISOString().split('T')[0];
-    this.approveForm.patchValue({ startDate: today });
+
+    this.approveForm.patchValue({
+      startDate: formatForInput(sub?.startDate) || today,
+      expiryDate: formatForInput(sub?.expiresAt) || '',
+      accessType: this.approveForm.value.accessType || 'Standard Trial (Restricted)',
+      notes: this.approveForm.value.notes || '',
+    });
   }
+
 
   approveUser() {
     if (this.approveForm.invalid || !this.selectedStudent) return;

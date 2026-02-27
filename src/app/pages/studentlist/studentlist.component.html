@@ -32,7 +32,7 @@
       </button>
     </div>
 
-    <div class="student-meta">
+    <div class="student-meta" *ngIf="s.subscription?.startDate">
       <span class="badge trial" *ngIf="s.subscription?.status === 'TRIAL'">
         Trial
       </span>
@@ -82,7 +82,7 @@
   {{ getStartLabel(selectedStudent.subscription?.startDate) }}
 </span>
 
-   <span> &</span>
+   <span *ngIf="selectedStudent.subscription?.startDate && selectedStudent.subscription?.expiresAt "> &</span>
     <span class="days" *ngIf="selectedStudent.subscription?.expiresAt">
   Your {{ selectedStudent.subscription?.status }} version
   {{ getExpiryLabel(selectedStudent.subscription?.expiresAt) }}
