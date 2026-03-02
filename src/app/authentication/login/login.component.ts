@@ -28,45 +28,46 @@ export class LoginComponent {
   }
 
   OnSubmit() {
-    if (this.loginForm.invalid) return;
+  if (this.loginForm.invalid) return;
 
-    this.loading = true;
+  this.loading = true;
 
-    const payload = {
-      ...this.loginForm.value,
-      deviceId: this.getDeviceId(),
-      deviceInfo: this.getDeviceInfo(),
-    };
+  const payload = {
+    ...this.loginForm.value,
+    deviceId: this.getDeviceId(),
+    deviceInfo: this.getDeviceInfo(),
+  };
 
-    this.loginservice.login(payload).subscribe({
-      next: (res: any) => {
-        console.log('✅ Login success', res);
+  this.loginservice.login(payload).subscribe({
+    next: (res: any) => {
+      console.log('✅ Login success', res);
 
-        // ✅ STORE for guard
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
+      /* IMPORTANT FIX */
+      const data = res.data;
 
-        // optional device store
-        if (res.device) {
-          localStorage.setItem('device', JSON.stringify(res.device));
-        }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
 
-        // ✅ super admin redirect
-        if (res.user?.isSuperAdmin) {
-          this.router.navigateByUrl('/medgyan');
-        } else {
-          this.router.navigateByUrl('/');
-        }
-
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('❌ Login error', err);
-        this.loading = false;
+      if (data.device) {
+        localStorage.setItem('device', JSON.stringify(data.device));
       }
-    });
-  }
 
+      /* Redirect */
+      if (data.user?.isSuperAdmin) {
+        this.router.navigateByUrl('/medgyan');
+      } else {
+        this.router.navigateByUrl('/');
+      }
+
+      this.loading = false;
+    },
+
+    error: (err) => {
+      console.error('❌ Login error', err);
+      this.loading = false;
+    }
+  });
+}
   // ✅ simple device id
   private getDeviceId(): string {
     let id = localStorage.getItem('deviceId');

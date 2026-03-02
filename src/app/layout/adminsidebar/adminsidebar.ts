@@ -48,56 +48,22 @@ export class styAdminsidebar {
   }
 
 
-  // hasAnyMasterDropdownAccess(): boolean {
-  //   const permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
 
-  //   const check = (module: string) =>
-  //     permissions.some((perm: any) =>
-  //       perm.moduleName === module &&
-  //       (perm.permissions?.create === 1 ||
-  //        perm.permissions?.read === 1 ||
-  //        perm.permissions?.update === 1 ||
-  //        perm.permissions?.delete === 1)
-  //     );
-
-  //   return (
-  //     check('doctor') ||
-  //     check('service') ||
-  //     check('serviceGroup') ||
-  //     check('surgeryService') ||
-  //     check('packages') ||
-  //     check('bedType') ||
-  //     check('bed') ||
-  //     check('roomType') ||
-  //     check('room') ||
-  //     check('wardMaster') ||
-  //     check('medicine') ||
-  //     check('testParameter') ||
-  //     check('testGroup') ||
-  //     check('symptoms') ||
-  //     check('symptomGroup')
-  //   );
-  // }
 
    dropdowns: {
-    opd: boolean;
-    master: boolean;
-    ipd: boolean;
-    doctor: boolean;
     user: boolean;
     layout: boolean;
     settings: boolean;
     course  : boolean;
+    category  : boolean;
     // add all other dropdowns here
   } = {
-    opd: false,
-    master: false,
-    ipd: false,
-    doctor: false,
+
     user: false,
     layout: false,
     settings: false,
     course: false,
+    category : false
     // ...
   };
 

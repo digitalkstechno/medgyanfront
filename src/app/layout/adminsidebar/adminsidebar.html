@@ -1,6 +1,6 @@
 <aside class="sidebar" [ngClass]="{ collapsed: isCollapsed }">
   <!-- LOGO -->
-  <div class="logo-container" routerLink="/dashboard">
+  <div class="logo-container" routerLink="/medgyan">
     <div class="logo">
       @if (isCollapsed) {
       <img src="/logo.png" alt="Hospital Logo" class="logo-image" />
@@ -26,7 +26,7 @@
       </li>
 
 
-      <!-- USER DROPDOWN -->
+      <!-- User DROPDOWN -->
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" (click)="toggleDropdown('user')">
           @if (isCollapsed) {
@@ -58,7 +58,7 @@
               </a>
               }
             </li>
-            <li>
+            <!-- <li>
 
               @if(isCollapsed){
               <i class="fa-regular fa-folder-open"></i>
@@ -78,11 +78,50 @@
               </a>
               }
 
-            </li>
+            </li> -->
           </div>
         </ul>
       </li>
-      <!-- USER DROPDOWN -->
+      <!-- Category DROPDOWN -->
+      <!-- <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" (click)="toggleDropdown('category')">
+          @if (isCollapsed) {
+          <i class="fa-solid fa-user nav-icon"></i>
+          }
+          <span class="nav-text">Category Management</span>
+        </a>
+
+        <ul class="dropdown-menu settingmenu" [class.open]="dropdowns.category">
+          <div class="dropdown-grid">
+            <li>
+              @if (isCollapsed) {
+              <i class="fa-solid fa-user-check"></i>
+
+              }@else {
+
+              <a class="dropdown-item" routerLink="/medgyan/category">
+                Add Categories
+              </a>
+              }
+            </li>
+            <li>
+              @if(isCollapsed){
+              <i class="fa-solid fa-stopwatch"></i>
+              }@else{
+
+              <a class="dropdown-item" routerLink="/medgyan/categorylist">
+                Categories List
+              </a>
+              }
+            </li>
+            <li>
+          </div>
+        </ul>
+      </li> -->
+
+
+
+      <!-- Course DROPDOWN -->
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" (click)="toggleDropdown('course')">
           @if (isCollapsed) {
@@ -98,7 +137,7 @@
               @if(isCollapsed){
               <i class="fa-solid fa-folder-plus"></i>
               }@else {
-              <a class="dropdown-item" routerLink="/master/usermaster">
+              <a class="dropdown-item" routerLink="/medgyan/content">
                 Add Course
               </a>
               }
@@ -109,7 +148,7 @@
               <i class="fa-solid fa-map"></i>
               }@else {
 
-              <a class="dropdown-item" routerLink="/ipd/discount">
+              <a class="dropdown-item" routerLink="/medgyan/contentlist">
                 Course List
               </a>
               }

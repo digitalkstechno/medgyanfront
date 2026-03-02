@@ -1,0 +1,53 @@
+.page{
+  padding:30px;
+  display:flex;
+  justify-content:center;
+}
+
+.card{
+  width:500px;
+  padding:25px;
+  border-radius:10px;
+  background:white;
+  box-shadow:0 0 10px rgba(0,0,0,0.08);
+}
+
+h2{
+  margin-bottom:20px;
+}
+
+.form-group{
+  margin-bottom:18px;
+}
+
+label{
+  font-weight:600;
+  display:block;
+  margin-bottom:6px;
+}
+
+.form-control{
+  width:100%;
+  padding:10px;
+  border-radius:6px;
+  border:1px solid #ddd;
+}
+
+small{
+  color:red;
+}
+
+.btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:6px;
+  background:#1976d2;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.btn:hover{
+  background:#125aa0;
+}

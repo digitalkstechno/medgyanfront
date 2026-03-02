@@ -1,0 +1,72 @@
+<div class="container mt-4">
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <div class="content-card">
+
+        <h4>Add Content</h4>
+
+        <form [formGroup]="contentForm" (ngSubmit)="onSubmit()">
+
+          <div class="row">
+
+            <!-- TITLE -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Title</label>
+              <input type="text" formControlName="title" class="form-control">
+            </div>
+
+            <!-- URL -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Content URL</label>
+              <input type="text" formControlName="contentUrl" class="form-control">
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="col-md-12 mb-3">
+              <label class="form-label">Description</label>
+              <textarea formControlName="description" class="form-control"></textarea>
+            </div>
+
+            <!-- CATEGORY -->
+            <!-- <div class="col-md-6 mb-3">
+              <label class="form-label">Category</label>
+              <select formControlName="category" class="form-control">
+                <option value="">Select Category</option>
+                <option *ngFor="let c of categories" [value]="c._id">
+                  {{ c.name }}
+                </option>
+              </select>
+            </div> -->
+
+            <!-- THUMBNAIL -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Thumbnail</label>
+              <input type="file" (change)="onThumbnail($event)" class="form-control">
+            </div>
+
+            <!-- PLAN -->
+            <div class="col-md-12 mb-3">
+              <label class="form-label">Allowed Plans</label>
+
+              <div class="plan-box">
+                <label *ngFor="let p of plans">
+                  <input type="checkbox" [value]="p" (change)="onPlanChange($event)">
+                  {{ p }}
+                </label>
+              </div>
+            </div>
+
+          </div>
+
+          <button type="submit" class="btn-save">Save Content</button>
+
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

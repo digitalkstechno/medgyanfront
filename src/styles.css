@@ -612,13 +612,13 @@ i:hover {
     pointer-events: none;
   } */
 
-:host {
+/* :host {
   display: block;
   font-family: "Segoe UI", sans-serif;
   background: #f3f6f9;
   padding: 1rem;
   color: #333;
-}
+} */
 
 .header {
   text-align: center;

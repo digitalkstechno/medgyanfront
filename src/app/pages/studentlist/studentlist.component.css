@@ -626,3 +626,16 @@ textarea {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
+.blocked-card{
+  opacity: 0.6;
+  border: 2px solid #ff4d4f;
+  background: #fff5f5;
+}
+
+.badge.blocked{
+  background: #ff4d4f;
+  color: white;
+  font-weight: 600;
+  padding: 4px 10px;
+  margin-left: 10px;
+}

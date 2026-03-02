@@ -1,0 +1,46 @@
+<div class="page">
+
+  <div class="card">
+
+    <h2>Add Category</h2>
+
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+
+      <!-- CATEGORY NAME -->
+      <div class="form-group">
+        <label>Category Name</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          placeholder="Enter category name"
+        />
+
+        <small *ngIf="categoryForm.get('name')?.touched && categoryForm.get('name')?.invalid">
+          Category name is required
+        </small>
+      </div>
+
+      <!-- PARENT CATEGORY -->
+      <!-- <div class="form-group">
+        <label>Parent Category</label>
+
+        <select class="form-control" formControlName="parent">
+          <option [ngValue]="null">Main Category</option>
+
+          <option *ngFor="let cat of categories" [value]="cat._id">
+            {{ cat.name }}
+          </option>
+        </select>
+      </div> -->
+
+      <!-- BUTTON -->
+      <button class="btn" type="submit" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Create Category' }}
+      </button>
+
+    </form>
+
+  </div>
+
+</div>

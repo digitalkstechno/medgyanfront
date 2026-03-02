@@ -1,0 +1,176 @@
+.container{
+  max-width:1400px;
+}
+
+/* HEADER */
+
+.page-title{
+  font-weight:700;
+  margin-bottom:5px;
+}
+
+.subtitle{
+  color:#6b7280;
+  margin-bottom:25px;
+}
+
+/* ================= GRID ================= */
+
+.content-grid{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr); /* ✅ FIXED 5 PER ROW */
+  gap:20px;
+}
+
+/* ✅ Responsive */
+
+@media (max-width: 1200px){
+  .content-grid{
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 992px){
+  .content-grid{
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px){
+  .content-grid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px){
+  .content-grid{
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+/* ================= CARD ================= */
+
+.content-card{
+  background:white;
+  border-radius:14px;
+  overflow:hidden;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  transition:.3s;
+}
+
+.content-card:hover{
+  transform:translateY(-6px);
+}
+
+/* IMAGE */
+
+.thumb{
+  position:relative;
+}
+
+.thumb img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+}
+
+/* PLAY BUTTON */
+
+.play-btn{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+}
+
+/* BODY */
+
+.card-body{
+  padding:15px;
+}
+
+.title{
+  font-size:16px;
+  font-weight:600;
+}
+
+.desc{
+  font-size:13px;
+  color:#666;
+}
+
+/* PLAN */
+
+.plan-row{
+  margin-top:10px;
+}
+
+.plan{
+  background:#7c3aed;
+  color:white;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  margin-right:6px;
+}
+
+/* ================= PAGINATION ================= */
+
+.pagination-box{
+  display:flex;
+  justify-content:center;
+  margin-top:30px;
+  gap:8px;
+}
+
+.page-btn{
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  background:#e5e7eb;
+  cursor:pointer;
+}
+
+.page-btn.active{
+  background:#2563eb;
+  color:white;
+}
+/* VIDEO MODAL */
+
+.video-modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.video-container{
+  width:70%;
+  background:white;
+  padding:15px;
+  border-radius:10px;
+}
+
+.close-btn{
+  margin-top:10px;
+  border:none;
+  background:#ef4444;
+  color:white;
+  padding:8px 18px;
+  border-radius:6px;
+}

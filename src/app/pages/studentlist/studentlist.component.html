@@ -3,50 +3,68 @@
   <h2 class="page-title">Student Management</h2>
 
   <!-- STUDENT LIST -->
-  <div
-    class="student-card"
-    *ngFor="let s of students"
-    (click)="openActionModal(s)"
-  >
+  <!-- STUDENT LIST -->
+<div class="student-card"
+     *ngFor="let s of students"
+     (click)="openActionModal(s)"
+     [class.blocked-card]="s.isBlocked">
 
-    <div class="student-header">
-      <!-- <div class="student-info"> -->
+  <div class="student-header">
 
+    <div class="avatar">{{ s.name?.charAt(0) }}</div>
 
+    <h6 class="form-label">Student Username : {{ s.userName }}</h6>
+    <p>Student Name : {{ s.name }}</p>
+    <p>Student Email: {{ s.email }}</p>
+    <p>Student Device Id: {{ s.deviceId }}</p>
 
-        <div class="avatar">{{ s.name?.charAt(0) }}</div>
+    <!-- BLOCK BADGE -->
+    <span class="badge blocked" *ngIf="s.isBlocked">
+      🚫 Blocked User
+    </span>
 
-          <h6 for="" class="form-label">Student Username : {{ s.userName }}</h6>
-          <p>Student Name : {{ s.name }}</p>
-          <p>Student Email: {{ s.email }}</p>
-
-
-      <!-- </div> -->
-
-      <!-- stop propagation so card click not fire -->
-      <button
-        class="approve-btn"
-        (click)="openApproveModal(s); $event.stopPropagation()"
-      >
-        Approve
-      </button>
-    </div>
-
-    <div class="student-meta" *ngIf="s.subscription?.startDate">
-      <span class="badge trial" *ngIf="s.subscription?.status === 'TRIAL'">
-        Trial
-      </span>
-
-      <span class="badge active" *ngIf="s.subscription?.status === 'ACTIVE'">
-        Active
-      </span>
-
-      <span class="days" *ngIf="s.subscription?.expiresAt">
-        {{ getDaysLeft(s.subscription?.expiresAt) }} days left
-      </span>
-    </div>
+    <!-- APPROVE BUTTON -->
+    <button class="approve-btn"
+            (click)="openApproveModal(s); $event.stopPropagation()"
+            [disabled]="s.isBlocked">
+      Approve
+    </button>
 
   </div>
+
+  <!-- SUBSCRIPTION INFO (HIDE IF BLOCKED) -->
+  <div class="student-meta"
+       *ngIf="!s.isBlocked && s.subscription?.startDate">
+
+    <!-- STATUS -->
+    <span class="badge trial"
+          *ngIf="s.subscription?.status === 'TRIAL'">
+      Trial
+    </span>
+
+    <span class="badge active"
+          *ngIf="s.subscription?.status === 'ACTIVE'">
+      Active
+    </span>
+
+    <!-- DAYS / EXPIRED -->
+    <span class="days" *ngIf="s.subscription?.expiresAt">
+
+      <!-- IF EXPIRED -->
+      <ng-container *ngIf="getDaysLeft(s.subscription?.expiresAt) <= 0; else showDays">
+        Trial has expired – please contact
+      </ng-container>
+
+      <!-- IF DAYS LEFT -->
+      <ng-template #showDays>
+        {{ getDaysLeft(s.subscription?.expiresAt) }} days left
+      </ng-template>
+
+    </span>
+
+  </div>
+
+</div>
 </div>
 
 <!-- ================= ACTION MODAL ================= -->
@@ -54,7 +72,7 @@
   <div class="modal-box small">
     <div class="modal-header">
       <h3>User Details</h3>
-        <i class="fa-solid fa-xmark close-icon" (click)="closeActionModal()"></i>
+      <i class="fa-solid fa-xmark close-icon" (click)="closeActionModal()"></i>
     </div>
 
     <div class="student-info">
@@ -75,26 +93,39 @@
           <span>{{selectedStudent.deviceId}}</span>
         </div>
       </div>
+      <div class="info-row" *ngIf="selectedStudent.isBlocked">
+        <span class="badge blocked">
+          Blocked User
+        </span>
+      </div>
+    </div>
+
+    <div class="" *ngIf="!selectedStudent.isBlocked">
+      <span class="days" *ngIf="selectedStudent.subscription?.startDate">
+        {{ getStartLabel(selectedStudent.subscription?.startDate) }}
+      </span>
+
+      <span *ngIf="selectedStudent.subscription?.startDate && selectedStudent.subscription?.expiresAt "> &</span>
+      <span class="days" *ngIf="selectedStudent.subscription?.expiresAt">
+        Your {{ selectedStudent.subscription?.status }} version
+        {{ getExpiryLabel(selectedStudent.subscription?.expiresAt) }}
+      </span>
     </div>
 
 
-  <span class="days" *ngIf="selectedStudent.subscription?.startDate">
-  {{ getStartLabel(selectedStudent.subscription?.startDate) }}
-</span>
 
-   <span *ngIf="selectedStudent.subscription?.startDate && selectedStudent.subscription?.expiresAt "> &</span>
-    <span class="days" *ngIf="selectedStudent.subscription?.expiresAt">
-  Your {{ selectedStudent.subscription?.status }} version
-  {{ getExpiryLabel(selectedStudent.subscription?.expiresAt) }}
-</span>
-
-
-    <div class="action-buttons">
-      <button class="action-btn extend" (click)="extendSubscription()">
+    <div class="action-buttons d-flex">
+      <button class="action-btn extend" (click)="DelinkUser()">
         DeLink Student
       </button>
-      <button class="action-btn danger" (click)="deleteUser()">
-        Delete User
+      <!-- Block -->
+      <button *ngIf="!selectedStudent.isBlocked" class="action-btn danger" (click)="blockUser()">
+        Block User
+      </button>
+
+      <!-- Unblock -->
+      <button *ngIf="selectedStudent.isBlocked" class="action-btn extend" (click)="UnblockUser()">
+        Unblock User
       </button>
     </div>
   </div>
