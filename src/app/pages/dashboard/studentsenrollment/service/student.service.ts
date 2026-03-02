@@ -15,6 +15,11 @@ export class StudentService {
 
 
   // student.service.ts
+// getStudent(page = 1, limit = 10, filters: any = {}) {
+//   const params: any = { page, limit, ...filters };
+//   return this.http.get<any>(`${this.studentapi}`, { params });
+// }
+
 getStudent(page = 1, limit = 10, filters: any = {}) {
   const params: any = { page, limit, ...filters };
   return this.http.get<any>(`${this.studentapi}`, { params });

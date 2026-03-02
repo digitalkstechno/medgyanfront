@@ -37,6 +37,6 @@
   }
 }
 
-input{
-  color: white;
+.inputsearch{
+  color: white !important;
 }

@@ -1,4 +1,58 @@
-<div class="container mt-4">
+
+<div class="flex justify-between items-center flex-wrap gap-3">
+<div class="relative max-w-md w-full hidden md:block mt-3">
+    <!-- <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span> -->
+    <input class="w-full pl-10 pr-4 py-2  border-none rounded-xl text-sm focus:ring-2  transition-all inputsearch"
+      [formControl]="searchControl" placeholder="Search Content by Title..." type="text" />
+  </div>
+
+  <!-- ===== PLAN FILTER TABS ===== -->
+<div class="plan-tabs mt-3">
+  <button
+    class="plan-tab"
+    [class.active]="selectedPlan === 'ALL'"
+    (click)="filterByPlan('ALL')"
+  >
+    All
+  </button>
+
+  <button
+    class="plan-tab"
+    [class.active]="selectedPlan === 'TRIAL'"
+    (click)="filterByPlan('TRIAL')"
+  >
+    Trial
+  </button>
+
+  <button
+    class="plan-tab"
+    [class.active]="selectedPlan === 'BASIC'"
+    (click)="filterByPlan('BASIC')"
+  >
+    Basic
+  </button>
+
+  <button
+    class="plan-tab"
+    [class.active]="selectedPlan === 'PRO'"
+    (click)="filterByPlan('PRO')"
+  >
+    Pro
+  </button>
+
+  <button
+    class="plan-tab"
+    [class.active]="selectedPlan === 'PREMIUM'"
+    (click)="filterByPlan('PREMIUM')"
+  >
+    Premium
+  </button>
+</div>
+</div>
+
+  <hr class="mt-3">
+
+<div class="content-page">
 
   <h2 class="page-title">Courses</h2>
   <p class="subtitle">Courses to get you started</p>
@@ -15,12 +69,6 @@
           alt="thumbnail"
         > -->
 
-        <!-- <img
-          [src]="'https://medigyan.digitalks.co.in/api/medgyan/uploads/' + item.thumbnail"
-          alt="thumbnail"
-        > -->
-
-        <!-- <img [src]="'https://medigyan.digitalks.co.in/uploads/' + item.thumbnail" alt="thumbnail"> -->
          <img [src]="'https://medigyan.digitalks.co.in/api/uploads/' + item.thumbnail">
 
 

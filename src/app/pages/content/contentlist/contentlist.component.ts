@@ -2,24 +2,32 @@ import { Component, OnInit } from '@angular/core';
 import { SHARED_IMPORTS } from '../../../constant/shared_imports';
 import { ContentService } from '../service/content.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-contentlist',
   standalone: true,
   imports: [SHARED_IMPORTS],
   templateUrl: './contentlist.component.html',
-  styleUrl: './contentlist.component.css'
+  styleUrl: './contentlist.component.css',
 })
 export class ContentlistComponent implements OnInit {
-
   contents: any[] = [];
+  filteredContents: any[] = [];
   paginatedContents: any[] = [];
+
+  searchControl = new FormControl('');
+  searchTerm = '';
 
   selectedVideo!: SafeResourceUrl | null;
 
+  // ✅ plan filter
+  selectedPlan: string = 'ALL';
+
   // ✅ pagination
   currentPage = 1;
-  pageSize = 10; // cards per page
+  pageSize = 10;
   totalPages = 0;
   pages: number[] = [];
 
@@ -28,45 +36,93 @@ export class ContentlistComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {}
 
-  ngOnInit(){
+  ngOnInit() {
+    this.searchfunction();
     this.loadContent();
   }
 
-  loadContent(){
-    this.contentService.getAllContent().subscribe((res:any)=>{
+  /* ================= SEARCH ================= */
+
+  searchfunction() {
+    this.searchControl.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((value) => {
+        this.searchTerm = (value || '').toString().trim();
+        this.currentPage = 1; // ✅ reset page on search
+        this.loadContent();
+      });
+  }
+
+  /* ================= LOAD ================= */
+
+  loadContent() {
+    const filters: any = {};
+
+    if (this.searchTerm) {
+      filters.title = this.searchTerm;
+    }
+
+    this.contentService.getAllContent(filters).subscribe((res: any) => {
       this.contents = res.contents || [];
-      this.setupPagination();
+      this.applyFilters(); // ✅ IMPORTANT
     });
+  }
+
+  /* ================= PLAN FILTER ================= */
+
+  filterByPlan(plan: string) {
+    this.selectedPlan = plan;
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let data = [...this.contents];
+
+    // ✅ plan filtering
+    if (this.selectedPlan !== 'ALL') {
+      data = data.filter((item: any) =>
+        item.allowedPlans?.includes(this.selectedPlan)
+      );
+    }
+
+    this.filteredContents = data;
+    this.setupPagination();
   }
 
   /* ================= PAGINATION ================= */
 
-  setupPagination(){
-    this.totalPages = Math.ceil(this.contents.length / this.pageSize);
+  setupPagination() {
+    this.totalPages = Math.ceil(
+      this.filteredContents.length / this.pageSize
+    );
+
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+
     this.updatePageData();
   }
 
-  updatePageData(){
+  updatePageData() {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
-    this.paginatedContents = this.contents.slice(start, end);
+
+    this.paginatedContents = this.filteredContents.slice(start, end);
   }
 
-  goToPage(page:number){
+  goToPage(page: number) {
     this.currentPage = page;
     this.updatePageData();
   }
 
-  nextPage(){
-    if(this.currentPage < this.totalPages){
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
       this.currentPage++;
       this.updatePageData();
     }
   }
 
-  prevPage(){
-    if(this.currentPage > 1){
+  prevPage() {
+    if (this.currentPage > 1) {
       this.currentPage--;
       this.updatePageData();
     }
@@ -74,16 +130,14 @@ export class ContentlistComponent implements OnInit {
 
   /* ================= PLAY VIDEO ================= */
 
-  playVideo(url: string){
-
-    if(!url) return;
+  playVideo(url: string) {
+    if (!url) return;
 
     let videoId = '';
 
-    if(url.includes('youtu.be')){
+    if (url.includes('youtu.be')) {
       videoId = url.split('/').pop()?.split('?')[0] || '';
-    }
-    else if(url.includes('watch?v=')){
+    } else if (url.includes('watch?v=')) {
       videoId = url.split('watch?v=')[1].split('&')[0];
     }
 
@@ -93,7 +147,7 @@ export class ContentlistComponent implements OnInit {
       this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
   }
 
-  closeVideo(){
+  closeVideo() {
     this.selectedVideo = null;
   }
 }

@@ -264,3 +264,10 @@ i {
   }
 
 }
+.text-danger{
+  color: red !important;
+}
+.btn-primary{
+background-color:  #2563eb ;
+color: white;
+}

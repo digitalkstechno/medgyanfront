@@ -1,0 +1,40 @@
+<div class="profile-page" *ngIf="user">
+
+  <div class="profile-card">
+
+    <!-- AVATAR -->
+    <div class="avatar">
+      {{ getInitials() }}
+    </div>
+
+    <!-- NAME -->
+    <h2 class="name">{{ user.name }}</h2>
+
+    <!-- ROLE BADGE -->
+    <div class="role-badge" [class.super]="user.isSuperAdmin">
+      {{ user.isSuperAdmin ? 'Super Admin' : 'User' }}
+    </div>
+
+    <!-- INFO LIST -->
+    <div class="info-list">
+
+      <div class="info-row">
+        <span class="label">Username</span>
+        <span class="value">{{ user.userName }}</span>
+      </div>
+
+      <div class="info-row">
+        <span class="label">Email</span>
+        <span class="value">{{ user.email }}</span>
+      </div>
+
+      <!-- <div class="info-row">
+        <span class="label">User ID</span>
+        <span class="value mono">{{ user._id }}</span>
+      </div> -->
+
+    </div>
+
+  </div>
+
+</div>

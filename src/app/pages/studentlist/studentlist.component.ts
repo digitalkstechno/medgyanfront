@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { StudentService } from '../dashboard/studentsenrollment/service/student.service';
 import { SHARED_IMPORTS } from '../../constant/shared_imports';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-studentlist',
@@ -13,7 +14,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class StudentlistComponent implements OnInit {
   students: any[] = [];
   selectedStudent: any = null;
-
+   searchControl = new FormControl('');
+  searchTerm = '';
   // pagination state
   page = 1;
   limit = 10;
@@ -33,6 +35,7 @@ export class StudentlistComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+       this.searchfunction();
     this.initForms();
     this.loadStudents();
   }
@@ -51,22 +54,42 @@ export class StudentlistComponent implements OnInit {
     });
   }
 
-  // ================= LOAD WITH PAGINATION =================
-  loadStudents() {
-    this.studentservice
-      .getStudent(this.page, this.limit)
-      .subscribe((res: any) => {
-        // res = { success, message, users, pagination }
-        this.students = (res.users || []).filter((u: any) => !u.isSuperAdmin);
-
-        if (res.pagination) {
-          this.page = res.pagination.page;
-          this.limit = res.pagination.limit;
-          this.total = res.pagination.total;
-          this.pages = res.pagination.pages;
-        }
+  searchfunction() {
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(400),         // wait 400ms after user stops typing
+        distinctUntilChanged()     // only if value actually changed
+      )
+      .subscribe(value => {
+        this.searchTerm = (value || '').toString().trim();
+        this.page = 1;
+        this.loadStudents();
       });
   }
+
+  // ================= LOAD WITH PAGINATION =================
+  loadStudents() {
+  const filters: any = {};
+
+  if (this.searchTerm) {
+    filters.name = this.searchTerm;
+    filters.userName = this.searchTerm;
+  }
+
+  this.studentservice
+    .getStudent(this.page, this.limit, filters) // ✅ PASS FILTERS
+    .subscribe((res: any) => {
+
+      this.students = (res.users || []).filter((u: any) => !u.isSuperAdmin);
+
+      if (res.pagination) {
+        this.page = res.pagination.page;
+        this.limit = res.pagination.limit;
+        this.total = res.pagination.total;
+        this.pages = res.pagination.pages;
+      }
+    });
+}
 
   // simple helpers for UI
   canPrev(): boolean {

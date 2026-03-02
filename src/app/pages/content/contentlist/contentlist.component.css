@@ -1,14 +1,18 @@
 .container{
   max-width:1400px;
 }
-
+.content-page {
+  padding: 24px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
 /* HEADER */
 
-.page-title{
-  font-weight:700;
-  margin-bottom:5px;
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
-
 .subtitle{
   color:#6b7280;
   margin-bottom:25px;
@@ -173,4 +177,49 @@
   color:white;
   padding:8px 18px;
   border-radius:6px;
+}
+
+
+/* ===== PLAN TABS WRAPPER ===== */
+.plan-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+/* ===== TAB BUTTON ===== */
+.plan-tab {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+/* ===== HOVER ===== */
+.plan-tab:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* ===== ACTIVE TAB ===== */
+.plan-tab.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+/* ===== SMALL SCREENS ===== */
+@media (max-width: 640px) {
+  .plan-tab {
+    font-size: 12px;
+    padding: 6px 14px;
+  }
 }

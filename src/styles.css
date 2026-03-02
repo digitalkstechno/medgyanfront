@@ -20,12 +20,11 @@
   } */
 
 .main-content {
+  flex: 1;
   margin-left: 260px;
+  transition: margin-left 0.3s ease;
+  background: #f5f5f5;
   min-height: 100vh;
-  background: #f8f9fb; /* Or white – this prevents the left-gap! */
-  width: calc(100% - 260px);
-  box-sizing: border-box;
-  overflow-x: auto;
 }
 
 /* layout styles  */
@@ -955,6 +954,7 @@ ul li {
   --dropdown-item-text: 13px;
   --dropdown-item-textcolor: #ffffff;
   --navlink-text-color: #ffffff;
+  --btn-primary :var(--dropdown-color)
 }
 
 .sidebar {

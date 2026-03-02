@@ -17,9 +17,14 @@ export class ContentService {
     return this.http.post(`${this.contentApi}`, data);
   }
 
-  getAllContent() {
-    return this.http.get(`${this.contentApi}`);
+  getAllContent( filters: any = {}) {
+    const params: any = {...filters };
+    return this.http.get(`${this.contentApi}`, { params });
   }
+//   getAllContent(page = 1, limit = 10, filters: any = {}) {
+//   const params: any = { page, limit, ...filters };
+//   return this.http.get<any>(`${this.contentApi}`, { params });
+// }
 
 
 

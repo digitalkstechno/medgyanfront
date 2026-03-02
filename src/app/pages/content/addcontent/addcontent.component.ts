@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SHARED_IMPORTS } from '../../../constant/shared_imports';
 import { ContentService } from '../service/content.service';
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-addcontent',
   standalone: true,
-  imports: [SHARED_IMPORTS],
+  imports: [CommonModule, ...SHARED_IMPORTS],
   templateUrl: './addcontent.component.html',
   styleUrl: './addcontent.component.css'
 })
@@ -17,7 +17,7 @@ export class AddcontentComponent implements OnInit {
 
   contentForm!: FormGroup;
   categories: any[] = [];
-  thumbnailFile: any;
+  thumbnailFile: File | null = null;
 
   plans = ["TRIAL","BASIC","PRO","PREMIUM"];
 
@@ -33,6 +33,8 @@ export class AddcontentComponent implements OnInit {
     this.loadCategories();
   }
 
+  /* ================= FORM INIT ================= */
+
   initForm() {
     this.contentForm = this.fb.group({
       title: ['', Validators.required],
@@ -40,11 +42,23 @@ export class AddcontentComponent implements OnInit {
       type: ['VIDEO', Validators.required],
       contentUrl: ['', Validators.required],
       category: [''],
-      allowedPlans: [[]],
+      allowedPlans: [[], [this.atLeastOnePlanValidator]],
+      thumbnail: [null, Validators.required],   // ✅ Now thumbnail part of form
       isFree: [false],
       isPublished: [true]
     });
   }
+
+  /* ================= CUSTOM VALIDATOR ================= */
+
+  atLeastOnePlanValidator(control: AbstractControl) {
+    if (!control.value || control.value.length === 0) {
+      return { required: true };
+    }
+    return null;
+  }
+
+  /* ================= LOAD CATEGORY ================= */
 
   loadCategories() {
     this.categoryService.getCategories().subscribe((res: any) => {
@@ -52,45 +66,52 @@ export class AddcontentComponent implements OnInit {
     });
   }
 
-  /* ========= PLAN SELECT ========= */
+  /* ================= PLAN CHANGE ================= */
 
   onPlanChange(event: any) {
 
-    const plans = this.contentForm.value.allowedPlans;
+    const control = this.contentForm.get('allowedPlans');
+    let plans = [...(control?.value || [])];
 
     if (event.target.checked) {
-      plans.push(event.target.value);
+      if (!plans.includes(event.target.value)) {
+        plans.push(event.target.value);
+      }
     } else {
-      const index = plans.indexOf(event.target.value);
-      if (index > -1) plans.splice(index, 1);
+      plans = plans.filter((p: string) => p !== event.target.value);
     }
 
-    this.contentForm.patchValue({ allowedPlans: plans });
+    control?.setValue(plans);
+    control?.markAsTouched();
+    control?.updateValueAndValidity();
   }
 
-  /* ========= THUMBNAIL ========= */
+  /* ================= THUMBNAIL ================= */
 
   onThumbnail(event: any) {
-    this.thumbnailFile = event.target.files[0];
+    const file = event.target.files[0];
+
+    if (file) {
+      this.thumbnailFile = file;
+      this.contentForm.patchValue({ thumbnail: file });
+      this.contentForm.get('thumbnail')?.updateValueAndValidity();
+    }
   }
 
-  /* ========= SUBMIT ========= */
+  /* ================= SUBMIT ================= */
 
   onSubmit() {
 
-
     if (this.contentForm.invalid) {
       this.contentForm.markAllAsTouched();
-      console.log("🚀 ~ AddcontentComponent ~ onSubmit ~ this.contentForm.invalid:", this.contentForm.invalid)
-
+      console.log("Form Invalid:", this.contentForm.errors);
       return;
     }
-      console.log("🚀 ~ AddcontentComponent ~ onSubmit ~ this.contentForm.valid")
 
     const formData = new FormData();
 
     Object.entries(this.contentForm.value).forEach(([key, value]) => {
-      if (key !== 'allowedPlans') {
+      if (key !== 'thumbnail' && key !== 'allowedPlans') {
         formData.append(key, value as any);
       }
     });
@@ -108,13 +129,12 @@ export class AddcontentComponent implements OnInit {
       next: () => {
         alert("Content Added Successfully");
         this.contentForm.reset();
-        this.router.navigateByUrl('/medgyan/contentlist')
+        this.router.navigateByUrl('/medgyan/contentlist');
       },
-      error: () => {
+      error: (err) => {
+        console.error(err);
         alert("Error Adding Content");
       }
     });
-
   }
-
 }

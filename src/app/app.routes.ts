@@ -50,8 +50,14 @@ export const routes: Routes = [
             (m) => m.ContentlistComponent,
           ),
       },
+
+      {
+        path: 'profile',
+        loadComponent : () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
+      },
     ],
   },
+
 
   {
     path: 'login',

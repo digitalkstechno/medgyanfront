@@ -1,15 +1,16 @@
 
 
 <!-- Sticky Header -->
-<header class="sticky top-0 z-30 flex items-center justify-between px-4 lg:px-8 py-3 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-<div class="flex items-center gap-4 flex-1">
+<header class="sticky top-0 z-[999] flex items-center justify-between px-4 lg:px-8 py-3 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<!-- <header class="sticky top-0 z-[999] bg-white"> -->
+  <div class="flex items-center gap-4 flex-1">
 <button class="lg:hidden text-slate-600 dark:text-slate-400">
 <span class="material-symbols-outlined">menu</span>
 </button>
-<div class="relative max-w-md w-full hidden md:block">
+<!-- <div class="relative max-w-md w-full hidden md:block">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search analytics, students..." type="text"/>
-</div>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 transition-all inputsearch" placeholder="Search analytics, students..." type="text"/>
+</div> -->
 </div>
 <div class="flex items-center gap-3 lg:gap-6">
 <button class="relative p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
@@ -18,8 +19,8 @@
 </button>
 <div class="flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-slate-800">
 <div class="text-right hidden sm:block">
-<p class="text-sm font-semibold leading-none">Praveen Srivastav</p>
-<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Admin</p>
+<p class="text-sm font-semibold leading-none">{{fullName}}</p>
+<!-- <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{email}}</p> -->
 </div>
 <div class="avatar-circle mx-3 position-relative">
     <span class="initials-text">{{ userInitials }}</span> <!-- Shows ONLY "P" -->
