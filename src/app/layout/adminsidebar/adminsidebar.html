@@ -37,27 +37,27 @@
 
         <ul class="dropdown-menu settingmenu" [class.open]="dropdowns.user">
           <div class="dropdown-grid">
-            <li>
+            <li routerLink="/medgyan/student">
               @if (isCollapsed) {
               <i class="fa-solid fa-user-check"></i>
 
               }@else {
 
-              <a class="dropdown-item" routerLink="/medgyan/student">
+              <a class="dropdown-item" >
                 Student Approval
               </a>
               }
             </li>
-            <li>
+            <!-- <li routerLink="/ipd/discount">
               @if(isCollapsed){
               <i class="fa-solid fa-stopwatch"></i>
               }@else{
 
-              <a class="dropdown-item" routerLink="/ipd/discount">
+              <a class="dropdown-item" >
                 Trial Control
               </a>
               }
-            </li>
+            </li> -->
             <!-- <li>
 
               @if(isCollapsed){
@@ -133,22 +133,22 @@
         <ul class="dropdown-menu settingmenu" [class.open]="dropdowns.course">
           <div class="dropdown-grid">
 
-            <li>
+            <li routerLink="/medgyan/content">
               @if(isCollapsed){
               <i class="fa-solid fa-folder-plus"></i>
               }@else {
-              <a class="dropdown-item" routerLink="/medgyan/content">
+              <a class="dropdown-item" >
                 Add Course
               </a>
               }
 
             </li>
-            <li>
+            <li routerLink="/medgyan/contentlist">
               @if(isCollapsed){
               <i class="fa-solid fa-map"></i>
               }@else {
 
-              <a class="dropdown-item" routerLink="/medgyan/contentlist">
+              <a class="dropdown-item" >
                 Course List
               </a>
               }
@@ -171,12 +171,12 @@
 
         <ul class="dropdown-menu" [class.open]="dropdowns.settings">
           <div class="dropdown-grid">
-            <li>
+            <li routerLink="/medgyan/profile">
               @if (isCollapsed) {
               <i class="fa-solid fa-person"></i>
               }@else {
 
-              <a class="dropdown-item" routerLink="/medgyan/profile">
+              <a class="dropdown-item" >
                 Profile
               </a>
               }
