@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StudentService } from './studentsenrollment/service/student.service';
-import { RouterLink } from "@angular/router";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit {
-
   totalStudents = 0;
   trialActive = 0;
   trialExpired = 0;
@@ -33,126 +32,71 @@ export class DashboardComponent implements OnInit {
     this.fetchStudents();
   }
 
-  // fetchStudents(): void {
-  //   this.loading = true;
-  //   this.error = null;
-
-  //   this.studentService.getStudent(1, 1000, {}).subscribe({
-  //     next: (res: any) => {
-  //       const users = res?.users || [];
-
-  //       // exclude super admin
-  //       const nonSuperUsers = users.filter((u: any) => !u.isSuperAdmin);
-  //       this.totalStudents = nonSuperUsers.length;
-
-  //       const now = new Date();
-
-  //       let trialActiveCount = 0;
-  //       let trialExpiredCount = 0;
-  //       let paidCount = 0;
-  //       let pendingCount = 0;
-
-  //       nonSuperUsers.forEach((user: any) => {
-  //         const sub = user.subscription || {};
-  //         const status: string | undefined = sub.status;
-  //         const expiresAt: Date | null = sub.expiresAt ? new Date(sub.expiresAt) : null;
-
-  //         // PENDING APPROVAL:
-  //         // TRIAL user with no expiresAt -> pending
-  //         if (status === 'TRIAL' && !expiresAt) {
-  //           pendingCount++;
-  //           return; // do not treat as active/expired trial
-  //         }
-
-  //         // TRIAL ACTIVE / EXPIRED
-  //         if (status === 'TRIAL' && expiresAt) {
-  //           if (expiresAt < now) {
-  //             trialExpiredCount++;
-  //           } else {
-  //             trialActiveCount++;
-  //           }
-  //         }
-
-  //         // PAID USERS
-  //         if (status === 'ACTIVE' || status === 'PAID') {
-  //           paidCount++;
-  //         }
-  //       });
-
-  //       this.trialActive = trialActiveCount;
-  //       this.trialExpired = trialExpiredCount;
-  //       this.paidUsers = paidCount;
-  //       this.pendingApprovals = pendingCount;
-
-  //       this.loading = false;
-  //     },
-  //     error: (err) => {
-  //       console.error(err);
-  //       this.error = 'Failed to load dashboard data';
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
-
   pendingUsers: any[] = [];
 
-fetchStudents(): void {
-  this.loading = true;
-  this.error = null;
+  fetchStudents(): void {
+    this.loading = true;
+    this.error = null;
 
-  this.studentService.getStudent(1, 1000, {}).subscribe({
-    next: (res: any) => {
-      const users = res?.users || [];
-      const nonSuperUsers = users.filter((u: any) => !u.isSuperAdmin);
-      this.totalStudents = nonSuperUsers.length;
+    this.studentService.getStudent(1, 1000, {}).subscribe({
+      next: (res: any) => {
+        const users = res?.users || [];
+        const nonSuperUsers = users.filter((u: any) => !u.isSuperAdmin);
+        this.totalStudents = nonSuperUsers.length;
 
-      const now = new Date();
+        const now = new Date();
 
-      let trialActiveCount = 0;
-      let trialExpiredCount = 0;
-      let paidCount = 0;
-      let pendingCount = 0;
-      const pendingList: any[] = [];
+        let trialActiveCount = 0;
+        let trialExpiredCount = 0;
+        let paidCount = 0;
+        let pendingCount = 0;
+        const pendingList: any[] = [];
 
-      nonSuperUsers.forEach((user: any) => {
-        const sub = user.subscription || {};
-        const status: string | undefined = sub.status;
-        const expiresAt: Date | null = sub.expiresAt ? new Date(sub.expiresAt) : null;
+        nonSuperUsers.forEach((user: any) => {
+          const sub = user.subscription || {};
+          const status: string | undefined = sub.status;
+          const expiresAt: Date | null = sub.expiresAt
+            ? new Date(sub.expiresAt)
+            : null;
 
-        // pending = TRIAL with no expiresAt
-        if (status === 'TRIAL' && !expiresAt) {
-          pendingCount++;
-          pendingList.push(user);
-          return;
-        }
-
-        if (status === 'TRIAL' && expiresAt) {
-          if (expiresAt < now) {
-            trialExpiredCount++;
-          } else {
-            trialActiveCount++;
+          if (status === 'TRIAL' && !expiresAt) {
+            pendingCount++;
+            pendingList.push(user);
+            return;
           }
-        }
 
-        if (status === 'ACTIVE' || status === 'PAID') {
-          paidCount++;
-        }
-      });
+          // ✅ If backend already marked expired
+          if (status === 'EXPIRED') {
+            trialExpiredCount++;
+            return;
+          }
 
-      this.trialActive = trialActiveCount;
-      this.trialExpired = trialExpiredCount;
-      this.paidUsers = paidCount;
-      this.pendingApprovals = pendingCount;
-      this.pendingUsers = pendingList;
+          if (status === 'TRIAL' && expiresAt) {
+            if (expiresAt < now) {
+              trialExpiredCount++;
+            } else {
+              trialActiveCount++;
+            }
+          }
 
-      this.loading = false;
-    },
-    error: (err) => {
-      console.error(err);
-      this.error = 'Failed to load dashboard data';
-      this.loading = false;
-    }
-  });
-}
+          if (status === 'ACTIVE' || status === 'PAID') {
+            paidCount++;
+          }
+        });
 
+        this.trialActive = trialActiveCount;
+        this.trialExpired = trialExpiredCount;
+        this.paidUsers = paidCount;
+        this.pendingApprovals = pendingCount;
+        this.pendingUsers = pendingList;
+
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'Failed to load dashboard data';
+        this.loading = false;
+      },
+    });
+  }
 }
