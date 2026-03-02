@@ -5,11 +5,7 @@
 
   <div class="content-grid">
 
-    <div
-      class="content-card"
-      *ngFor="let item of paginatedContents"
-      (click)="playVideo(item.contentUrl)"
-    >
+    <div class="content-card" *ngFor="let item of paginatedContents" (click)="playVideo(item.contentUrl)">
 
       <!-- Thumbnail -->
       <div class="thumb">
@@ -19,10 +15,13 @@
           alt="thumbnail"
         > -->
 
-         <img
+        <!-- <img
           [src]="'https://medigyan.digitalks.co.in/api/medgyan/uploads/' + item.thumbnail"
           alt="thumbnail"
-        >
+        > -->
+
+        <!-- <img [src]="'https://medigyan.digitalks.co.in/uploads/' + item.thumbnail" alt="thumbnail"> -->
+         <img [src]="'https://medigyan.digitalks.co.in/api/uploads/' + item.thumbnail">
 
 
         <div class="play-btn">▶</div>
@@ -41,10 +40,7 @@
         </p>
 
         <div class="plan-row">
-          <span
-            class="plan"
-            *ngFor="let p of item.allowedPlans"
-          >
+          <span class="plan" *ngFor="let p of item.allowedPlans">
             {{p}}
           </span>
         </div>
@@ -59,28 +55,15 @@
 
   <div class="pagination-box" *ngIf="totalPages > 1">
 
-    <button
-      class="page-btn"
-      (click)="prevPage()"
-      [disabled]="currentPage === 1"
-    >
+    <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
       Prev
     </button>
 
-    <button
-      class="page-btn"
-      *ngFor="let p of pages"
-      [class.active]="p === currentPage"
-      (click)="goToPage(p)"
-    >
+    <button class="page-btn" *ngFor="let p of pages" [class.active]="p === currentPage" (click)="goToPage(p)">
       {{p}}
     </button>
 
-    <button
-      class="page-btn"
-      (click)="nextPage()"
-      [disabled]="currentPage === totalPages"
-    >
+    <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
       Next
     </button>
 
@@ -93,12 +76,7 @@
 <div class="video-modal" *ngIf="selectedVideo">
   <div class="video-container">
 
-    <iframe
-      width="100%"
-      height="450"
-      [src]="selectedVideo"
-      frameborder="0"
-      allowfullscreen>
+    <iframe width="100%" height="450" [src]="selectedVideo" frameborder="0" allowfullscreen>
     </iframe>
 
     <button class="close-btn" (click)="closeVideo()">Close</button>
