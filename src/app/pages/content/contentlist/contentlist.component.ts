@@ -126,34 +126,64 @@ export class ContentlistComponent implements OnInit {
 
   /* ================= PLAY VIDEO (YOUTUBE + VIMEO) ================= */
 
+  // playVideo(url: string) {
+  //   if (!url) return;
+
+  //   let embedUrl = '';
+
+  //   // ===== YOUTUBE =====
+  //   if (url.includes('youtube.com') || url.includes('youtu.be')) {
+  //     let videoId = '';
+
+  //     if (url.includes('youtu.be')) {
+  //       videoId = url.split('/').pop()?.split('?')[0] || '';
+  //     } else if (url.includes('watch?v=')) {
+  //       videoId = url.split('watch?v=')[1].split('&')[0];
+  //     }
+
+  //     embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+  //   }
+
+  //   // ===== VIMEO =====
+  //   if (url.includes('vimeo.com')) {
+  //     const match = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
+  //     const videoId = match ? match[1] : '';
+  //     embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1`;
+  //   }
+
+  //   this.selectedVideo =
+  //     this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+  // }
+
   playVideo(url: string) {
-    if (!url) return;
+  if (!url) return;
 
-    let embedUrl = '';
+  let embedUrl = '';
 
-    // ===== YOUTUBE =====
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      let videoId = '';
+  // ===== 1️⃣ VIMEO FIRST (PRIORITY) =====
+  if (url.includes('vimeo.com')) {
+    const match = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
+    const videoId = match ? match[1] : '';
 
-      if (url.includes('youtu.be')) {
-        videoId = url.split('/').pop()?.split('?')[0] || '';
-      } else if (url.includes('watch?v=')) {
-        videoId = url.split('watch?v=')[1].split('&')[0];
-      }
-
-      embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    }
-
-    // ===== VIMEO =====
-    else if (url.includes('vimeo.com')) {
-      const match = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
-      const videoId = match ? match[1] : '';
-      embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1`;
-    }
-
-    this.selectedVideo =
-      this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+    embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1`;
   }
+
+  // ===== 2️⃣ YOUTUBE =====
+  else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    let videoId = '';
+
+    if (url.includes('youtu.be')) {
+      videoId = url.split('/').pop()?.split('?')[0] || '';
+    } else if (url.includes('watch?v=')) {
+      videoId = url.split('watch?v=')[1].split('&')[0];
+    }
+
+    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+  }
+
+  this.selectedVideo =
+    this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+}
 
   closeVideo() {
     this.selectedVideo = null;
