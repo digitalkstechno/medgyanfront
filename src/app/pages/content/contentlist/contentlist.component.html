@@ -87,6 +87,23 @@
     </div>
 
   </div>
+    <!-- ================= PAGINATION ================= -->
+
+  <div class="pagination-box" *ngIf="totalPages > 1">
+
+    <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+      Prev
+    </button>
+
+    <button class="page-btn" *ngFor="let p of pages" [class.active]="p === currentPage" (click)="goToPage(p)">
+      {{p}}
+    </button>
+
+    <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+      Next
+    </button>
+
+  </div>
 
 </div>
 
