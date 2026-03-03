@@ -32,6 +32,14 @@ getStudent(page = 1, limit = 10, filters: any = {}) {
     return this.http.put(`${this.studentapi}/${studentId}`,studentdata)
   }
 
+  // updateStudent(studentId: string, studentdata: any): Observable<any> {
+  //   return this.http.put(`${this.studentapi}/${studentId}`, studentdata);
+  // }
+
+  // ✅ Extend subscription (bonus)
+  extendSubscription(studentId: string, data: any): Observable<any> {
+    return this.http.post(`${this.studentapi}/${studentId}/extend`, data);  
+  }
 
   deleteStudent(studentId : string):Observable<any>{
     return this.http.delete(`${this.studentapi}/${studentId}`)

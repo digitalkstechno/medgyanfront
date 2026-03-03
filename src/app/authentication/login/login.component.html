@@ -68,9 +68,7 @@
             </label>
             <input
               class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-              placeholder="Enter username or email"
-              type="text"
-              formControlName="identifier" />
+              placeholder="Enter username or email" type="text" formControlName="identifier" />
           </div>
 
           <!-- Password -->
@@ -83,20 +81,16 @@
 
             <input
               class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-              placeholder="••••••••"
-              type="password"
-              formControlName="pin" />
+              placeholder="••••••••" type="password" formControlName="pin" />
           </div>
 
-          <button
-            type="submit"
-            [disabled]="loginForm.invalid || loading"
-            class="w-full bg-primary hover:bg-primary/90 text-white font-bold h-12 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-4">
-
+          <button type="submit" [disabled]="loginForm.invalid || loading" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-12 rounded-lg
+         shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2 mt-4
+         disabled:opacity-60 disabled:cursor-not-allowed">
             <span *ngIf="!loading">Login to Dashboard</span>
             <span *ngIf="loading">Logging in...</span>
-
           </button>
+
         </form>
 
         <div class="mt-10 text-center">

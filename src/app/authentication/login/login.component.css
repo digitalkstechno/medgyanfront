@@ -1,0 +1,8 @@
+/* global styles.css or tailwind.css */
+.bg-primary {
+  background-color: #2563eb !important; /* blue-600 */
+}
+
+.bg-primary:hover {
+  background-color: #1d4ed8 !important; /* blue-700 */
+}

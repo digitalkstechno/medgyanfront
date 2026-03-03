@@ -23,6 +23,10 @@ export const routes: Routes = [
           ),
       },
       {
+        path:'subscriptioncontrol',
+        loadComponent : () => import('./pages/subscriptioncontrol/subscriptioncontrol/subscriptioncontrol.component').then( m => m.SubscriptioncontrolComponent)
+      },
+      {
         path: 'category',
         loadComponent: () =>
           import('./pages/category/addcategory/addcategory.component').then(
