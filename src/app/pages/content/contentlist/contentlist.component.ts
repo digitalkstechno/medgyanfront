@@ -13,6 +13,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
   styleUrl: './contentlist.component.css',
 })
 export class ContentlistComponent implements OnInit {
+
   contents: any[] = [];
   filteredContents: any[] = [];
   paginatedContents: any[] = [];
@@ -20,12 +21,10 @@ export class ContentlistComponent implements OnInit {
   searchControl = new FormControl('');
   searchTerm = '';
 
-  selectedVideo!: SafeResourceUrl | null;
+  selectedVideo: SafeResourceUrl | null = null;
 
-  // ✅ plan filter
   selectedPlan: string = 'ALL';
 
-  // ✅ pagination
   currentPage = 1;
   pageSize = 10;
   totalPages = 0;
@@ -48,7 +47,7 @@ export class ContentlistComponent implements OnInit {
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((value) => {
         this.searchTerm = (value || '').toString().trim();
-        this.currentPage = 1; // ✅ reset page on search
+        this.currentPage = 1;
         this.loadContent();
       });
   }
@@ -64,11 +63,11 @@ export class ContentlistComponent implements OnInit {
 
     this.contentService.getAllContent(filters).subscribe((res: any) => {
       this.contents = res.contents || [];
-      this.applyFilters(); // ✅ IMPORTANT
+      this.applyFilters();
     });
   }
 
-  /* ================= PLAN FILTER ================= */
+  /* ================= FILTER ================= */
 
   filterByPlan(plan: string) {
     this.selectedPlan = plan;
@@ -79,7 +78,6 @@ export class ContentlistComponent implements OnInit {
   applyFilters() {
     let data = [...this.contents];
 
-    // ✅ plan filtering
     if (this.selectedPlan !== 'ALL') {
       data = data.filter((item: any) =>
         item.allowedPlans?.includes(this.selectedPlan)
@@ -98,14 +96,12 @@ export class ContentlistComponent implements OnInit {
     );
 
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-
     this.updatePageData();
   }
 
   updatePageData() {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
-
     this.paginatedContents = this.filteredContents.slice(start, end);
   }
 
@@ -128,20 +124,32 @@ export class ContentlistComponent implements OnInit {
     }
   }
 
-  /* ================= PLAY VIDEO ================= */
+  /* ================= PLAY VIDEO (YOUTUBE + VIMEO) ================= */
 
   playVideo(url: string) {
     if (!url) return;
 
-    let videoId = '';
+    let embedUrl = '';
 
-    if (url.includes('youtu.be')) {
-      videoId = url.split('/').pop()?.split('?')[0] || '';
-    } else if (url.includes('watch?v=')) {
-      videoId = url.split('watch?v=')[1].split('&')[0];
+    // ===== YOUTUBE =====
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      let videoId = '';
+
+      if (url.includes('youtu.be')) {
+        videoId = url.split('/').pop()?.split('?')[0] || '';
+      } else if (url.includes('watch?v=')) {
+        videoId = url.split('watch?v=')[1].split('&')[0];
+      }
+
+      embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
     }
 
-    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    // ===== VIMEO =====
+    else if (url.includes('vimeo.com')) {
+      const match = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
+      const videoId = match ? match[1] : '';
+      embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1`;
+    }
 
     this.selectedVideo =
       this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);

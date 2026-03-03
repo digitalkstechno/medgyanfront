@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SHARED_IMPORTS } from '../../../constant/shared_imports';
 import { ContentService } from '../service/content.service';
@@ -11,25 +16,30 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, ...SHARED_IMPORTS],
   templateUrl: './addcontent.component.html',
-  styleUrl: './addcontent.component.css'
+  styleUrl: './addcontent.component.css',
 })
 export class AddcontentComponent implements OnInit {
-
   contentForm!: FormGroup;
   categories: any[] = [];
   thumbnailFile: File | null = null;
 
-  plans = ["TRIAL","BASIC","PRO","PREMIUM"];
+  plans = ['TRIAL', 'BASIC', 'PRO', 'PREMIUM'];
 
   constructor(
     private fb: FormBuilder,
     private contentService: ContentService,
-    private categoryService : CategoryService,
-    private router : Router
+    private categoryService: CategoryService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+    this.contentForm.get('contentUrl')?.valueChanges.subscribe((url) => {
+      const id = this.extractVimeoId(url);
+      this.contentForm.patchValue({
+        contentId: id,
+      });
+    });
     this.loadCategories();
   }
 
@@ -41,11 +51,12 @@ export class AddcontentComponent implements OnInit {
       description: [''],
       type: ['VIDEO', Validators.required],
       contentUrl: ['', Validators.required],
+      contentId: ['', Validators.required],
       category: [''],
       allowedPlans: [[], [this.atLeastOnePlanValidator]],
-      thumbnail: [null, Validators.required],   // ✅ Now thumbnail part of form
+      thumbnail: [null, Validators.required], // ✅ Now thumbnail part of form
       isFree: [false],
-      isPublished: [true]
+      isPublished: [true],
     });
   }
 
@@ -69,7 +80,6 @@ export class AddcontentComponent implements OnInit {
   /* ================= PLAN CHANGE ================= */
 
   onPlanChange(event: any) {
-
     const control = this.contentForm.get('allowedPlans');
     let plans = [...(control?.value || [])];
 
@@ -98,13 +108,20 @@ export class AddcontentComponent implements OnInit {
     }
   }
 
+  /* =================  Extract VimeoId ================= */
+
+  extractVimeoId(url: string): string {
+    if (!url) return '';
+
+    const match = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
+    return match ? match[1] : '';
+  }
   /* ================= SUBMIT ================= */
 
   onSubmit() {
-
     if (this.contentForm.invalid) {
       this.contentForm.markAllAsTouched();
-      console.log("Form Invalid:", this.contentForm.errors);
+      console.log('Form Invalid:', this.contentForm.errors);
       return;
     }
 
@@ -118,7 +135,7 @@ export class AddcontentComponent implements OnInit {
 
     formData.append(
       'allowedPlans',
-      JSON.stringify(this.contentForm.value.allowedPlans)
+      JSON.stringify(this.contentForm.value.allowedPlans),
     );
 
     if (this.thumbnailFile) {
@@ -127,14 +144,14 @@ export class AddcontentComponent implements OnInit {
 
     this.contentService.createContent(formData).subscribe({
       next: () => {
-        alert("Content Added Successfully");
+        alert('Content Added Successfully');
         this.contentForm.reset();
         this.router.navigateByUrl('/medgyan/contentlist');
       },
       error: (err) => {
         console.error(err);
-        alert("Error Adding Content");
-      }
+        alert('Error Adding Content');
+      },
     });
   }
 }
