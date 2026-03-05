@@ -52,7 +52,8 @@ export class StudentlistComponent implements OnInit {
     this.approveForm = this.fb.group({
       startDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
-      accessType: ['TRIAL', Validators.required], // TRIAL | BASIC | PRO | PREMIUM
+      // make sure this matches backend enum exactly: TRIAL | BASIC | PRO | PREMIUM
+      accessType: ['TRIAL', Validators.required],
       notes: [''],
     });
 
@@ -77,13 +78,16 @@ export class StudentlistComponent implements OnInit {
 
     if (this.searchTerm) {
       filters.name = this.searchTerm;
-      filters.userName = this.searchTerm;
+      // filters.userName = this.searchTerm;
     }
 
     this.studentservice
       .getStudent(this.page, this.limit, filters)
       .subscribe((res: any) => {
-        this.students = (res.users || []).filter((u: any) => !u.isSuperAdmin);
+        // if backend already excludes superadmin, do NOT filter here
+        // if backend still sends superadmin, keep filter but then
+        // be aware pagination total includes that record
+        this.students = (res.users || []); // remove .filter((u: any) => !u.isSuperAdmin);
 
         if (res.pagination) {
           this.page = res.pagination.page;
@@ -152,6 +156,8 @@ export class StudentlistComponent implements OnInit {
     this.approveForm.patchValue({
       startDate: formatForInput(sub?.startDate) || today,
       expiryDate: formatForInput(sub?.expiresAt) || '',
+      // IMPORTANT: this must match the exact key from backend
+      // you are using subscription_plan in TS, so backend must also use subscription_plan
       accessType: sub?.subscription_plan || 'TRIAL',
       notes: '',
     });
@@ -180,6 +186,7 @@ export class StudentlistComponent implements OnInit {
     const payload = {
       subscription: {
         status,
+        // keep this field name consistent with backend schema
         subscription_plan: selectedPlan,
         startDate: this.approveForm.value.startDate,
         expiresAt: this.approveForm.value.expiryDate,
@@ -234,6 +241,7 @@ export class StudentlistComponent implements OnInit {
     const payload = {
       subscription: {
         status: 'ACTIVE',
+        // again keep same key as backend: subscription_plan
         subscription_plan:
           this.selectedStudent.subscription?.subscription_plan || 'BASIC',
         startDate:

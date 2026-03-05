@@ -1169,7 +1169,7 @@ ul li {
 /* Footer */
 footer {
   background-color: var(--footer-color);
-  padding: 10px 20px;
+  /* padding: 10px 20px; */
   color: white;
   text-align: center;
 }
@@ -1339,3 +1339,4 @@ table tr.discharged-row td {
   font-weight: 600 !important;
   cursor: pointer;
 }
+
