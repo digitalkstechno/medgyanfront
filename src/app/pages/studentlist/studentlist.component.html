@@ -43,10 +43,10 @@
     <div class="student-meta" *ngIf="!s.isBlocked && s.subscription?.startDate">
       <!-- STATUS -->
       <span class="badge trial" *ngIf="s.subscription?.status === 'TRIAL'">
-        Trial
+        Trial Plan
       </span>
       <span class="badge active" *ngIf="s.subscription?.status === 'ACTIVE'">
-        Active
+        {{s.subscription?.subscription_plan}} PLAN
       </span>
 
       <!-- DAYS / EXPIRED -->
@@ -109,7 +109,7 @@
       </span>
       <span *ngIf="selectedStudent?.subscription?.startDate && selectedStudent?.subscription?.expiresAt ">&</span>
       <span class="days" *ngIf="selectedStudent?.subscription?.expiresAt">
-        Your {{ selectedStudent?.subscription?.status }} version
+        Your {{ selectedStudent?.subscription?.subscription_plan }} version
         {{ getExpiryLabel(selectedStudent?.subscription?.expiresAt) }}
       </span>
     </div>

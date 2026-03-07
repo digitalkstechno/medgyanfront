@@ -405,11 +405,11 @@ export class StudentlistComponent implements OnInit {
     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
-      return `Your ${this.selectedStudent.subscription.status} version started today`;
+      return `Your ${this.selectedStudent.subscription.subscription_plan} version started today`;
     }
     if (diffDays === 1) {
-      return `Your ${this.selectedStudent.subscription.status} version started 1 day ago`;
+      return `Your ${this.selectedStudent.subscription.subscription_plan} version started 1 day ago`;
     }
-    return `Your ${this.selectedStudent.subscription.status} version started ${diffDays} days ago`;
+    return `Your ${this.selectedStudent.subscription.subscription_plan} version started ${diffDays} days ago`;
   }
 }
