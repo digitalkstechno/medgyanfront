@@ -4,32 +4,36 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environment/env';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StudentService {
+  constructor(private http: HttpClient) {}
 
-  constructor(private http : HttpClient) { }
-
-  studentapi = `${environment.baseurl}user`
-
-
+  studentapi = `${environment.baseurl}user`;
 
   // student.service.ts
-// getStudent(page = 1, limit = 10, filters: any = {}) {
-//   const params: any = { page, limit, ...filters };
-//   return this.http.get<any>(`${this.studentapi}`, { params });
-// }
+  // getStudent(page = 1, limit = 10, filters: any = {}) {
+  //   const params: any = { page, limit, ...filters };
+  //   return this.http.get<any>(`${this.studentapi}`, { params });
+  // }
 
-getStudent(page = 1, limit = 10, filters: any = {}) {
-  const params: any = { page, limit, ...filters };
-  return this.http.get<any>(`${this.studentapi}`, { params });
-}
-
-  getStudentbyId(studentId : string):Observable<any>{
-    return this.http.get(`${this.studentapi}${studentId}`)
+  getStudent(page = 1, limit = 10, filters: any = {}) {
+    const params: any = { page, limit, ...filters };
+    return this.http.get<any>(`${this.studentapi}`, { params });
   }
-  updateStudent(studentId : string , studentdata : any):Observable<any>{
-    return this.http.put(`${this.studentapi}/${studentId}`,studentdata)
+
+  getStudentbyId(studentId: string): Observable<any> {
+    return this.http.get(`${this.studentapi}${studentId}`);
+  }
+  updateStudent(studentId: string, studentdata: any): Observable<any> {
+    return this.http.put(`${this.studentapi}/${studentId}`, studentdata);
+  }
+  // ChangePassword(UserId : string , studentdata : any):Observable<any>{
+  //   return this.http.put(`${this.studentapi}/changepassword/${UserId}`,studentdata)
+  // }
+  // student.service.ts
+  ChangePassword(studentId: string,data: { pin: string }): Observable<any> {
+    return this.http.put(`${this.studentapi}/changepassword/${studentId}`, data);
   }
 
   // updateStudent(studentId: string, studentdata: any): Observable<any> {
@@ -38,19 +42,19 @@ getStudent(page = 1, limit = 10, filters: any = {}) {
 
   // ✅ Extend subscription (bonus)
   extendSubscription(studentId: string, data: any): Observable<any> {
-    return this.http.post(`${this.studentapi}/${studentId}/extend`, data);  
+    return this.http.post(`${this.studentapi}/${studentId}/extend`, data);
   }
 
-  deleteStudent(studentId : string):Observable<any>{
-    return this.http.delete(`${this.studentapi}/${studentId}`)
+  deleteStudent(studentId: string): Observable<any> {
+    return this.http.delete(`${this.studentapi}/${studentId}`);
   }
- blockStudent(studentId: string): Observable<any> {
-  return this.http.put(`${this.studentapi}/${studentId}/block`, {});
-}
- unblockStudent(studentId: string): Observable<any> {
-  return this.http.put(`${this.studentapi}/${studentId}/unblock`, {});
-}
- delinkStudent(studentId: string): Observable<any> {
-  return this.http.put(`${this.studentapi}/${studentId}/delink-device`, {});
-}
+  blockStudent(studentId: string): Observable<any> {
+    return this.http.put(`${this.studentapi}/${studentId}/block`, {});
+  }
+  unblockStudent(studentId: string): Observable<any> {
+    return this.http.put(`${this.studentapi}/${studentId}/unblock`, {});
+  }
+  delinkStudent(studentId: string): Observable<any> {
+    return this.http.put(`${this.studentapi}/${studentId}/delink-device`, {});
+  }
 }

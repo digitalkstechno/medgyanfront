@@ -1,5 +1,4 @@
 <div class="profile-page" *ngIf="user">
-
   <div class="profile-card">
 
     <!-- AVATAR -->
@@ -17,7 +16,6 @@
 
     <!-- INFO LIST -->
     <div class="info-list">
-
       <div class="info-row">
         <span class="label">Username</span>
         <span class="value">{{ user.userName }}</span>
@@ -27,14 +25,79 @@
         <span class="label">Email</span>
         <span class="value">{{ user.email }}</span>
       </div>
+    </div>
 
-      <!-- <div class="info-row">
-        <span class="label">User ID</span>
-        <span class="value mono">{{ user._id }}</span>
-      </div> -->
+    <!-- TOGGLE BUTTON (only for super admin) -->
+    <div class="actions-row top-actions" *ngIf="user.isSuperAdmin">
+      <button
+        type="button"
+        class="btn btn-outline"
+        (click)="toggleChangePassword()"
+      >
+        {{ showChangePassword ? 'Cancel' : 'Change Password' }}
+      </button>
+    </div>
 
+    <!-- CHANGE PASSWORD SECTION -->
+    <div class="change-password-section" *ngIf="showChangePassword">
+      <h3 class="section-title">Change Password</h3>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
+
+        <div class="info-row">
+          <span class="label">New Password</span>
+          <div class="value value-input">
+            <input
+              type="password"
+              formControlName="newPassword"
+              class="form-control"
+              placeholder="Enter new password"
+            />
+            <div
+              class="error"
+              *ngIf="
+                passwordForm.get('newPassword')?.invalid &&
+                passwordForm.get('newPassword')?.touched
+              "
+            >
+              Password is required (min 8 characters)
+            </div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Confirm Password</span>
+          <div class="value value-input">
+            <input
+              type="password"
+              formControlName="confirmPassword"
+              class="form-control"
+              placeholder="Re-type new password"
+            />
+            <div
+              class="error"
+              *ngIf="
+                passwordForm.hasError('mismatch') &&
+                passwordForm.get('confirmPassword')?.touched
+              "
+            >
+              Passwords do not match
+            </div>
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="passwordForm.invalid"
+          >
+            Update Password
+          </button>
+        </div>
+
+      </form>
     </div>
 
   </div>
-
 </div>
