@@ -11,10 +11,22 @@
   <div class="student-card" *ngFor="let s of students" (click)="openActionModal(s)" [class.blocked-card]="s.isBlocked">
     <div class="student-header">
       <div class="avatar">{{ s.name?.charAt(0) }}</div>
-      <h6 class="form-label">Student Username : {{ s.userName }}</h6>
-      <p>Student Name : {{ s.name }}</p>
-      <p>Student Email: {{ s.email }}</p>
-      <p>Student Device Id: {{ s.deviceId }}</p>
+      <h6 class="form-label" *ngIf="s.userName">Student Username : {{ s.userName }}</h6>
+      <div class="row">
+
+        <p class="col-md-6" *ngIf="s.name">Student Name : {{ s.name }}</p>
+        <p class="col-md-6" *ngIf="s.email">Student Email: {{ s.email }}</p>
+      </div>
+      <div class="row">
+        <!-- <p class="col-md-6">Student Device Id: {{ s.deviceId }}</p> -->
+        <p class="col-md-6" *ngIf="s.deviceId">
+          Student Device Id:
+          {{ s.deviceId ? (s.deviceId | slice:0:8) + '...' : '' }}
+        </p>
+
+        <p class="col-md-6" *ngIf="s.contact_no">Student Mobile Number: {{ s.contact_no }}</p>
+      </div>
+
 
       <!-- BLOCK BADGE -->
       <span class="badge blocked" *ngIf="s.isBlocked">
@@ -78,6 +90,12 @@
           <span>{{selectedStudent?.deviceId}}</span>
         </div>
       </div>
+      <div class="info-row">
+        <div class="info-item full-width">
+          <label>Student Mobile Number:</label>
+          <span>{{selectedStudent?.contact_no}}</span>
+        </div>
+      </div>
       <div class="info-row" *ngIf="selectedStudent?.isBlocked">
         <span class="badge blocked">
           Blocked User
@@ -124,14 +142,18 @@
       <!-- ✅ CURRENT STATUS DISPLAY -->
       <div class="current-status mb-4" *ngIf="selectedStudent.subscription">
         <h4>Current Plan: {{ selectedStudent.subscription.subscription_plan || 'None' }}</h4>
-        <div class="status-badge"
-             [ngClass]="{
+        <div class="status-badge" [ngClass]="{
+               'trial': selectedStudent.subscription.subscription_plan === 'TRIAL',
+               'premium': selectedStudent.subscription.subscription_plan === 'PREMIUM',
+               'expired': selectedStudent.subscription.status === 'EXPIRED'
+             }">
+          <!-- [ngClass]="{
                'trial': selectedStudent.subscription.subscription_plan === 'TRIAL',
                'basic': selectedStudent.subscription.subscription_plan === 'BASIC',
                'pro': selectedStudent.subscription.subscription_plan === 'PRO',
                'premium': selectedStudent.subscription.subscription_plan === 'PREMIUM',
                'expired': selectedStudent.subscription.status === 'EXPIRED'
-             }">
+             }" -->
           {{ selectedStudent.subscription.status }} - {{ selectedStudent.subscription.subscription_plan }}
         </div>
         <p *ngIf="selectedStudent.subscription.expiresAt">
@@ -164,9 +186,9 @@
         <div class="full">
           <label>Subscription Plan *</label>
           <select formControlName="accessType" class="plan-select">
-            <option value="TRIAL">Trial Plan (Restricted)</option>
-            <option value="BASIC">Basic Plan</option>
-            <option value="PRO">Pro Plan</option>
+            <option value="TRIAL">Trial Plan</option>
+            <!-- <option value="BASIC">Basic Plan</option>
+            <option value="PRO">Pro Plan</option> -->
             <option value="PREMIUM">Premium Plan</option>
           </select>
         </div>
@@ -176,22 +198,19 @@
           <textarea formControlName="notes" placeholder="Reason for approval..."></textarea>
         </div>
 
-      <!-- ✅ PLAN PREVIEW -->
-      <div class="plan-preview mt-4 p-3 bg-gray-50 rounded-lg">
-        <h5>Will Grant:</h5>
-        <div class="preview-plan">
-          <strong>{{ getPreviewPlanName() }}</strong>
-          from {{ approveForm.value.startDate | date:'shortDate' }}
-          until {{ approveForm.value.expiryDate | date:'shortDate' }}
+        <!-- ✅ PLAN PREVIEW -->
+        <div class="plan-preview mt-4 p-3 bg-gray-50 rounded-lg">
+          <h5>Will Grant:</h5>
+          <div class="preview-plan">
+            <strong>{{ getPreviewPlanName() }}</strong>
+            from {{ approveForm.value.startDate | date:'shortDate' }}
+            until {{ approveForm.value.expiryDate | date:'shortDate' }}
+          </div>
         </div>
-      </div>
 
-    <div class="modal-footer">
-      <!-- <button class="cancel-btn" (click)="closeAllModals()">Cancel</button> -->
-      <button class="approve-main"
-              (click)="approveUser()"
-              [disabled]="approveForm.invalid">
-         Approve & Grant {{ getPreviewPlanName() }}
-      </button>
-    </div>
-
+        <div class="modal-footer">
+          <!-- <button class="cancel-btn" (click)="closeAllModals()">Cancel</button> -->
+          <button class="approve-main" (click)="approveUser()" [disabled]="approveForm.invalid">
+            Approve & Grant {{ getPreviewPlanName() }}
+          </button>
+        </div>

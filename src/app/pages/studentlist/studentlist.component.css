@@ -639,3 +639,32 @@ textarea {
   padding: 4px 10px;
   margin-left: 10px;
 }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+  box-sizing: border-box;
+}
+
+.col-md-6 {
+  flex: 0 0 auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  box-sizing: border-box;
+}
+
+/* Mobile-first responsive: full width below md (768px) */
+.col-md-6 {
+  flex-basis: 100%;  /* 12/12 on xs/sm */
+  max-width: 100%;
+}
+
+/* md breakpoint and up: 6/12 width (50%) */
+@media (min-width: 768px) {
+  .col-md-6 {
+    flex-basis: 50%;
+    max-width: 50%;
+  }
+}

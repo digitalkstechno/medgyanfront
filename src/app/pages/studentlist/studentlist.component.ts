@@ -167,8 +167,8 @@ export class StudentlistComponent implements OnInit {
     const accessType = this.approveForm.get('accessType')?.value;
     const planNames: { [key: string]: string } = {
       TRIAL: 'Trial',
-      BASIC: 'Basic',
-      PRO: 'Pro',
+      // BASIC: 'Basic',
+      // PRO: 'Pro',
       PREMIUM: 'Premium',
     };
     return planNames[accessType] || 'Access';
@@ -243,7 +243,7 @@ export class StudentlistComponent implements OnInit {
         status: 'ACTIVE',
         // again keep same key as backend: subscription_plan
         subscription_plan:
-          this.selectedStudent.subscription?.subscription_plan || 'BASIC',
+          this.selectedStudent.subscription?.subscription_plan || 'PREMIUM',
         startDate:
           this.selectedStudent.subscription?.startDate ||
           new Date().toISOString().split('T')[0],
@@ -251,7 +251,7 @@ export class StudentlistComponent implements OnInit {
       },
       subscriptionLog: {
         accessType:
-          this.selectedStudent.subscription?.subscription_plan || 'BASIC',
+          this.selectedStudent.subscription?.subscription_plan || 'PREMIUM',
         notes: 'Subscription extended by admin',
         action: 'EXTENDED',
       },

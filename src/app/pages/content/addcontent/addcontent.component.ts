@@ -23,7 +23,8 @@ export class AddcontentComponent implements OnInit {
   categories: any[] = [];
   thumbnailFile: File | null = null;
 
-  plans = ['TRIAL', 'BASIC', 'PRO', 'PREMIUM'];
+  plans = ['TRIAL',  'PREMIUM'];
+  // plans = ['TRIAL', 'BASIC', 'PRO', 'PREMIUM'];
 
   constructor(
     private fb: FormBuilder,
