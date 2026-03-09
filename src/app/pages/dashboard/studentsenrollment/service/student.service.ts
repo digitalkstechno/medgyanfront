@@ -23,11 +23,18 @@ export class StudentService {
   }
 
   getStudentbyId(studentId: string): Observable<any> {
-    return this.http.get(`${this.studentapi}${studentId}`);
+    return this.http.get(`${this.studentapi}/${studentId}`);
   }
   updateStudent(studentId: string, studentdata: any): Observable<any> {
     return this.http.put(`${this.studentapi}/${studentId}`, studentdata);
   }
+ // service
+updateProfile(studentId: string, studentdata: any): Observable<any> {
+  return this.http.put(`${this.studentapi}/profile/${studentId}`, studentdata);
+}
+
+
+
   // ChangePassword(UserId : string , studentdata : any):Observable<any>{
   //   return this.http.put(`${this.studentapi}/changepassword/${UserId}`,studentdata)
   // }

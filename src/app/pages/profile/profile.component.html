@@ -16,6 +16,11 @@
 
     <!-- INFO LIST -->
     <div class="info-list">
+      <!-- <div class="info-row">
+        <span class="label">User ID</span>
+        <span class="value mono">{{ user._id }}</span>
+      </div> -->
+
       <div class="info-row">
         <span class="label">Username</span>
         <span class="value">{{ user.userName }}</span>
@@ -27,14 +32,22 @@
       </div>
     </div>
 
-    <!-- TOGGLE BUTTON (only for super admin) -->
+    <!-- SUPER ADMIN ACTIONS -->
     <div class="actions-row top-actions" *ngIf="user.isSuperAdmin">
       <button
         type="button"
         class="btn btn-outline"
         (click)="toggleChangePassword()"
       >
-        {{ showChangePassword ? 'Cancel' : 'Change Password' }}
+        {{ showChangePassword ? 'Cancel Password' : 'Change Password' }}
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-outline"
+        (click)="toggleQrUpload()"
+      >
+        {{ showQrUpload ? 'Cancel QR' : 'Manage QR Code' }}
       </button>
     </div>
 
@@ -96,6 +109,111 @@
           </button>
         </div>
 
+      </form>
+    </div>
+
+    <!-- QR CODE UPLOAD SECTION (SUPER ADMIN ONLY) -->
+    <div class="change-password-section" *ngIf="showQrUpload">
+      <h3 class="section-title">QR Code for Payments</h3>
+
+      <!-- CURRENT QRs (if exist) -->
+      <div class="qr-current" *ngIf="user?.Qrthumbnail && user.Qrthumbnail.length > 0; else noQr">
+        <div class="qr-current-list">
+          <div class="qr-wrapper" *ngFor="let qr of user.Qrthumbnail">
+            <!-- <img
+              [src]="'http://localhost:7000/uploads/' + qr"
+              alt="QR Code"
+              class="qr-image"
+              height="150"
+              width="150"
+            /> -->
+            <img
+              [src]="'https://medigyan.digitalks.co.in/api/uploads/' + qr"
+              alt="QR Code"
+              class="qr-image"
+              height="150"
+              width="150"
+            />
+            <button
+              type="button"
+              class="qr-remove-btn"
+              title="Remove this QR"
+              (click)="removeExistingQr(qr)"
+              [disabled]="isRemovingQr"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-outline danger"
+          (click)="removeQr()"
+          [disabled]="isRemovingQr"
+        >
+          Remove All Existing QR Codes
+        </button>
+      </div>
+
+      <ng-template #noQr>
+        <p class="no-qr-text">No QR code uploaded yet.</p>
+      </ng-template>
+
+      <!-- FILE INPUT -->
+      <form (ngSubmit)="uploadQr()" #qrForm="ngForm">
+        <div class="info-row">
+          <span class="label">Upload QR</span>
+          <div class="value value-input">
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              (change)="onQrFileSelected($event)"
+              class="form-control"
+            />
+            <div class="hint-text">
+              You can select one or multiple QR images used for payment scanning.
+            </div>
+          </div>
+        </div>
+
+        <!-- LOCAL PREVIEW WHEN NEW FILES SELECTED -->
+        <div class="qr-preview" *ngIf="selectedQrFiles && selectedQrFiles.length > 0">
+          <h4 class="section-title">Preview</h4>
+          <div class="qr-preview-list">
+            <div
+              class="qr-wrapper"
+              *ngFor="let preview of qrPreviewUrls; let i = index"
+            >
+              <img
+                [src]="preview"
+                alt="New QR preview"
+                class="qr-image"
+                height="120"
+                width="120"
+              />
+              <button
+                type="button"
+                class="qr-remove-btn"
+                title="Remove from selection"
+                (click)="removeSelectedPreview(i)"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!selectedQrFiles || selectedQrFiles.length === 0"
+          >
+            Save QR Code
+          </button>
+        </div>
       </form>
     </div>
 

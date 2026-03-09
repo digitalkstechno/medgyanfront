@@ -206,3 +206,44 @@
     text-align: left;
   }
 }
+.qr-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* circular red close button in top-right of QR */
+.qr-remove-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: #e53935;
+  color: #fff;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-remove-btn:hover {
+  background: #c62828;
+}
+
+.qr-remove-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.qr-image {
+  border-radius: 8px;
+  /* border: 1px solid #e0e0e0; */
+  padding: 15px;
+}
