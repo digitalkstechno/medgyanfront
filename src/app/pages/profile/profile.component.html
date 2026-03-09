@@ -120,20 +120,20 @@
       <div class="qr-current" *ngIf="user?.Qrthumbnail && user.Qrthumbnail.length > 0; else noQr">
         <div class="qr-current-list">
           <div class="qr-wrapper" *ngFor="let qr of user.Qrthumbnail">
-            <img
+            <!-- <img
               [src]="'http://localhost:7000/uploads/' + qr"
               alt="QR Code"
               class="qr-image"
               height="150"
               width="150"
-            />
-            <!-- <img
+            /> -->
+            <img
               [src]="'https://medigyan.digitalks.co.in/api/uploads/' + qr"
               alt="QR Code"
               class="qr-image"
               height="150"
               width="150"
-            /> -->
+            />
             <button
               type="button"
               class="qr-remove-btn"
