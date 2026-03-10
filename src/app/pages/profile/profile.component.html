@@ -21,12 +21,16 @@
         <span class="value mono">{{ user._id }}</span>
       </div> -->
 
-      <div class="info-row">
+      <div class="info-row" *ngIf="user.userName">
         <span class="label">Username</span>
         <span class="value">{{ user.userName }}</span>
       </div>
+      <div class="info-row" *ngIf="user.name">
+        <span class="label">Name</span>
+        <span class="value">{{ user.name }}</span>
+      </div>
 
-      <div class="info-row">
+      <div class="info-row" *ngIf="user.email">
         <span class="label">Email</span>
         <span class="value">{{ user.email }}</span>
       </div>

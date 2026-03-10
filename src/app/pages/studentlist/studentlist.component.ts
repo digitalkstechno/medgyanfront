@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { StudentService } from '../dashboard/studentsenrollment/service/student.service';
-import { SHARED_IMPORTS } from '../../constant/shared_imports';
+import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormControl,
@@ -8,7 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { StudentService } from '../dashboard/studentsenrollment/service/student.service';
+import { SHARED_IMPORTS } from '../../constant/shared_imports';
 
 @Component({
   selector: 'app-studentlist',
@@ -20,6 +20,7 @@ import { CommonModule } from '@angular/common';
 export class StudentlistComponent implements OnInit {
   students: any[] = [];
   selectedStudent: any = null;
+
   searchControl = new FormControl('');
   searchTerm = '';
 
@@ -28,6 +29,7 @@ export class StudentlistComponent implements OnInit {
   limit = 10;
   total = 0;
   pages = 0;
+  pageArray: number[] = [];
 
   // modals
   showApproveModal = false;
@@ -39,7 +41,7 @@ export class StudentlistComponent implements OnInit {
 
   constructor(
     private studentservice: StudentService,
-    private fb: FormBuilder,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit() {
@@ -52,8 +54,7 @@ export class StudentlistComponent implements OnInit {
     this.approveForm = this.fb.group({
       startDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
-      // make sure this matches backend enum exactly: TRIAL | BASIC | PRO | PREMIUM
-      accessType: ['TRIAL', Validators.required],
+      accessType: ['TRIAL', Validators.required], // TRIAL | PREMIUM
       notes: [''],
     });
 
@@ -78,24 +79,28 @@ export class StudentlistComponent implements OnInit {
 
     if (this.searchTerm) {
       filters.name = this.searchTerm;
-      // filters.userName = this.searchTerm;
     }
 
     this.studentservice
       .getStudent(this.page, this.limit, filters)
       .subscribe((res: any) => {
-        // if backend already excludes superadmin, do NOT filter here
-        // if backend still sends superadmin, keep filter but then
-        // be aware pagination total includes that record
-        this.students = (res.users || []); // remove .filter((u: any) => !u.isSuperAdmin);
+        this.students = res.users || [];
 
         if (res.pagination) {
           this.page = res.pagination.page;
           this.limit = res.pagination.limit;
           this.total = res.pagination.total;
           this.pages = res.pagination.pages;
+          this.buildPageArray();
         }
       });
+  }
+
+  buildPageArray() {
+    this.pageArray = [];
+    for (let i = 1; i <= this.pages; i++) {
+      this.pageArray.push(i);
+    }
   }
 
   // simple helpers for UI
@@ -156,8 +161,6 @@ export class StudentlistComponent implements OnInit {
     this.approveForm.patchValue({
       startDate: formatForInput(sub?.startDate) || today,
       expiryDate: formatForInput(sub?.expiresAt) || '',
-      // IMPORTANT: this must match the exact key from backend
-      // you are using subscription_plan in TS, so backend must also use subscription_plan
       accessType: sub?.subscription_plan || 'TRIAL',
       notes: '',
     });
@@ -167,8 +170,6 @@ export class StudentlistComponent implements OnInit {
     const accessType = this.approveForm.get('accessType')?.value;
     const planNames: { [key: string]: string } = {
       TRIAL: 'Trial',
-      // BASIC: 'Basic',
-      // PRO: 'Pro',
       PREMIUM: 'Premium',
     };
     return planNames[accessType] || 'Access';
@@ -180,13 +181,12 @@ export class StudentlistComponent implements OnInit {
       return;
     }
 
-    const selectedPlan = this.approveForm.value.accessType; // TRIAL, BASIC, PRO, PREMIUM
+    const selectedPlan = this.approveForm.value.accessType; // TRIAL, PREMIUM
     const status = selectedPlan === 'TRIAL' ? 'TRIAL' : 'ACTIVE';
 
     const payload = {
       subscription: {
         status,
-        // keep this field name consistent with backend schema
         subscription_plan: selectedPlan,
         startDate: this.approveForm.value.startDate,
         expiresAt: this.approveForm.value.expiryDate,
@@ -204,21 +204,23 @@ export class StudentlistComponent implements OnInit {
       .subscribe({
         next: (response: any) => {
           const index = this.students.findIndex(
-            (s) => s._id === this.selectedStudent._id,
+            (s) => s._id === this.selectedStudent._id
           );
           if (index !== -1 && response.data) {
             this.students[index] = response.data;
           }
 
           alert(
-            `✅ ${this.getPreviewPlanName()} plan granted/updated successfully!`,
+            `✅ ${this.getPreviewPlanName()} plan granted/updated successfully!`
           );
           this.closeAllModals();
           this.loadStudents();
         },
         error: (error) => {
           console.error('❌ Approval failed:', error);
-          alert('❌ Approval failed: ' + (error.error?.error || 'Try again'));
+          alert(
+            '❌ Approval failed: ' + (error.error?.error || 'Try again')
+          );
         },
       });
   }
@@ -241,9 +243,9 @@ export class StudentlistComponent implements OnInit {
     const payload = {
       subscription: {
         status: 'ACTIVE',
-        // again keep same key as backend: subscription_plan
         subscription_plan:
-          this.selectedStudent.subscription?.subscription_plan || 'PREMIUM',
+          this.selectedStudent.subscription?.subscription_plan ||
+          'PREMIUM',
         startDate:
           this.selectedStudent.subscription?.startDate ||
           new Date().toISOString().split('T')[0],
@@ -251,7 +253,8 @@ export class StudentlistComponent implements OnInit {
       },
       subscriptionLog: {
         accessType:
-          this.selectedStudent.subscription?.subscription_plan || 'PREMIUM',
+          this.selectedStudent.subscription?.subscription_plan ||
+          'PREMIUM',
         notes: 'Subscription extended by admin',
         action: 'EXTENDED',
       },
@@ -267,18 +270,18 @@ export class StudentlistComponent implements OnInit {
         },
         error: (error) => {
           console.error('❌ Extend failed:', error);
-          alert('Extension failed: ' + (error.error?.error || 'Unknown error'));
+          alert(
+            'Extension failed: ' + (error.error?.error || 'Unknown error')
+          );
         },
       });
   }
 
-  // needed by HTML
   closeExtendModal() {
     this.showExtendModal = false;
     this.extendForm.reset();
   }
 
-  // helper: only allow extend when expired
   isSubscriptionExpired(student: any): boolean {
     const exp = student?.subscription?.expiresAt;
     if (!exp) return false;
@@ -370,7 +373,9 @@ export class StudentlistComponent implements OnInit {
   getDaysLeft(expiryDate: string): number {
     const today = new Date().getTime();
     const expiry = new Date(expiryDate).getTime();
-    const diff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+    const diff = Math.ceil(
+      (expiry - today) / (1000 * 60 * 60 * 24)
+    );
     return diff < 0 ? 0 : diff;
   }
 

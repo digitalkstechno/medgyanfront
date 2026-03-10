@@ -1,32 +1,49 @@
 <div class="relative max-w-md w-full hidden md:block mt-3">
-  <input class="w-full pl-10 pr-4 py-2 border-none rounded-xl text-sm focus:ring-2 transition-all inputsearch"
-    [formControl]="searchControl" placeholder="Search Students by Name , Username..." type="text" />
+  <input
+    class="w-full pl-10 pr-4 py-2 border-none rounded-xl text-sm focus:ring-2 transition-all inputsearch"
+    [formControl]="searchControl"
+    placeholder="Search Students by Name , Username..."
+    type="text"
+  />
 </div>
-<hr class="mt-3">
+
+<hr class="mt-3" />
 
 <div class="student-page">
   <h2 class="page-title">Student Management</h2>
 
   <!-- STUDENT LIST -->
-  <div class="student-card" *ngFor="let s of students" (click)="openActionModal(s)" [class.blocked-card]="s.isBlocked">
+  <div
+    class="student-card"
+    *ngFor="let s of students"
+    (click)="openActionModal(s)"
+    [class.blocked-card]="s.isBlocked"
+  >
     <div class="student-header">
       <div class="avatar">{{ s.name?.charAt(0) }}</div>
-      <h6 class="form-label" *ngIf="s.userName">Student Username : {{ s.userName }}</h6>
-      <div class="row">
+      <h6 class="form-label" *ngIf="s.userName">
+        Student Username : {{ s.userName }}
+      </h6>
 
-        <p class="col-md-6" *ngIf="s.name">Student Name : {{ s.name }}</p>
-        <p class="col-md-6" *ngIf="s.email">Student Email: {{ s.email }}</p>
-      </div>
       <div class="row">
-        <!-- <p class="col-md-6">Student Device Id: {{ s.deviceId }}</p> -->
+        <p class="col-md-6" *ngIf="s.name">
+          Student Name : {{ s.name }}
+        </p>
+        <p class="col-md-6" *ngIf="s.email">
+          Student Email: {{ s.email }}
+        </p>
+      </div>
+
+      <div class="row">
         <p class="col-md-6" *ngIf="s.deviceId">
           Student Device Id:
-          {{ s.deviceId ? (s.deviceId | slice:0:8) + '...' : '' }}
+          {{ s.deviceId ? (s.deviceId | slice: 0 : 8) + '...' : '' }}
         </p>
 
-        <p class="col-md-6" *ngIf="s.contact_no">Student Mobile Number: {{ s.contact_no }}</p>
+        <p class="col-md-6" *ngIf="s.contact_no">
+          Student Mobile Number: {{ s.contact_no }}
+        </p>
       </div>
-
 
       <!-- BLOCK BADGE -->
       <span class="badge blocked" *ngIf="s.isBlocked">
@@ -34,33 +51,70 @@
       </span>
 
       <!-- APPROVE BUTTON -->
-      <button class="approve-btn" (click)="openApproveModal(s); $event.stopPropagation()" [disabled]="s.isBlocked">
+      <button
+        class="approve-btn"
+        (click)="openApproveModal(s); $event.stopPropagation()"
+        [disabled]="s.isBlocked"
+      >
         Approve
       </button>
     </div>
 
     <!-- SUBSCRIPTION INFO (HIDE IF BLOCKED) -->
-    <div class="student-meta" *ngIf="!s.isBlocked && s.subscription?.startDate">
+    <div
+      class="student-meta"
+      *ngIf="!s.isBlocked && s.subscription?.startDate"
+    >
       <!-- STATUS -->
       <span class="badge trial" *ngIf="s.subscription?.status === 'TRIAL'">
         Trial Plan
       </span>
       <span class="badge active" *ngIf="s.subscription?.status === 'ACTIVE'">
-        {{s.subscription?.subscription_plan}} PLAN
+        {{ s.subscription?.subscription_plan }} PLAN
       </span>
 
       <!-- DAYS / EXPIRED -->
       <span class="days" *ngIf="s.subscription?.expiresAt">
-        <!-- IF EXPIRED -->
         <ng-container *ngIf="getDaysLeft(s.subscription?.expiresAt) <= 0; else showDays">
           Trial has expired – please contact
         </ng-container>
-        <!-- IF DAYS LEFT -->
         <ng-template #showDays>
           {{ getDaysLeft(s.subscription?.expiresAt) }} days left
         </ng-template>
       </span>
     </div>
+  </div>
+
+  <!-- PAGINATION BAR -->
+  <div class="pagination-wrapper" *ngIf="pages > 1">
+    <button
+      class="btn btn-sm"
+      [disabled]="!canPrev()"
+      (click)="prevPage()"
+    >
+      Prev
+    </button>
+
+    <button
+      class="btn btn-sm"
+      *ngFor="let p of pageArray"
+      [class.active]="page === p"
+      (click)="goToPage(p)"
+    >
+      {{ p }}
+    </button>
+
+    <button
+      class="btn btn-sm"
+      [disabled]="!canNext()"
+      (click)="nextPage()"
+    >
+      Next
+    </button>
+
+    <span class="mx-2">
+      Page {{ page }} of {{ pages }} (Total: {{ total }})
+    </span>
   </div>
 </div>
 
@@ -73,29 +127,35 @@
     </div>
 
     <div class="student-info">
-      <div class="avatar big">{{ selectedStudent?.name?.charAt(0) }}</div>
+      <div class="avatar big">
+        {{ selectedStudent?.name?.charAt(0) }}
+      </div>
+
       <div class="info-row">
         <div class="info-item">
           <label>Student Name:</label>
-          <span>{{selectedStudent?.name}}</span>
+          <span>{{ selectedStudent?.name }}</span>
         </div>
         <div class="info-item">
           <label>Student Email:</label>
-          <span>{{selectedStudent?.email}}</span>
+          <span>{{ selectedStudent?.email }}</span>
         </div>
       </div>
+
       <div class="info-row">
         <div class="info-item full-width">
           <label>Student Device ID:</label>
-          <span>{{selectedStudent?.deviceId}}</span>
+          <span>{{ selectedStudent?.deviceId }}</span>
         </div>
       </div>
+
       <div class="info-row">
         <div class="info-item full-width">
           <label>Student Mobile Number:</label>
-          <span>{{selectedStudent?.contact_no}}</span>
+          <span>{{ selectedStudent?.contact_no }}</span>
         </div>
       </div>
+
       <div class="info-row" *ngIf="selectedStudent?.isBlocked">
         <span class="badge blocked">
           Blocked User
@@ -103,11 +163,17 @@
       </div>
     </div>
 
-    <div class="" *ngIf="!selectedStudent?.isBlocked">
+    <div *ngIf="!selectedStudent?.isBlocked">
       <span class="days" *ngIf="selectedStudent?.subscription?.startDate">
         {{ getStartLabel(selectedStudent?.subscription?.startDate) }}
       </span>
-      <span *ngIf="selectedStudent?.subscription?.startDate && selectedStudent?.subscription?.expiresAt ">&</span>
+      <span
+        *ngIf="
+          selectedStudent?.subscription?.startDate &&
+          selectedStudent?.subscription?.expiresAt
+        "
+        >&</span
+      >
       <span class="days" *ngIf="selectedStudent?.subscription?.expiresAt">
         Your {{ selectedStudent?.subscription?.subscription_plan }} version
         {{ getExpiryLabel(selectedStudent?.subscription?.expiresAt) }}
@@ -118,12 +184,22 @@
       <button class="action-btn extend" (click)="DelinkUser()">
         DeLink Student
       </button>
+
       <!-- Block -->
-      <button *ngIf="!selectedStudent?.isBlocked" class="action-btn danger" (click)="blockUser()">
+      <button
+        *ngIf="!selectedStudent?.isBlocked"
+        class="action-btn danger"
+        (click)="blockUser()"
+      >
         Block User
       </button>
+
       <!-- Unblock -->
-      <button *ngIf="selectedStudent?.isBlocked" class="action-btn extend" (click)="UnblockUser()">
+      <button
+        *ngIf="selectedStudent?.isBlocked"
+        class="action-btn extend"
+        (click)="UnblockUser()"
+      >
         Unblock User
       </button>
     </div>
@@ -139,25 +215,26 @@
     </div>
 
     <div class="modal-body" *ngIf="selectedStudent">
-      <!-- ✅ CURRENT STATUS DISPLAY -->
+      <!-- CURRENT STATUS DISPLAY -->
       <div class="current-status mb-4" *ngIf="selectedStudent.subscription">
-        <h4>Current Plan: {{ selectedStudent.subscription.subscription_plan || 'None' }}</h4>
-        <div class="status-badge" [ngClass]="{
-               'trial': selectedStudent.subscription.subscription_plan === 'TRIAL',
-               'premium': selectedStudent.subscription.subscription_plan === 'PREMIUM',
-               'expired': selectedStudent.subscription.status === 'EXPIRED'
-             }">
-          <!-- [ngClass]="{
-               'trial': selectedStudent.subscription.subscription_plan === 'TRIAL',
-               'basic': selectedStudent.subscription.subscription_plan === 'BASIC',
-               'pro': selectedStudent.subscription.subscription_plan === 'PRO',
-               'premium': selectedStudent.subscription.subscription_plan === 'PREMIUM',
-               'expired': selectedStudent.subscription.status === 'EXPIRED'
-             }" -->
-          {{ selectedStudent.subscription.status }} - {{ selectedStudent.subscription.subscription_plan }}
+        <h4>
+          Current Plan:
+          {{ selectedStudent.subscription.subscription_plan || 'None' }}
+        </h4>
+        <div
+          class="status-badge"
+          [ngClass]="{
+            trial: selectedStudent.subscription.subscription_plan === 'TRIAL',
+            premium: selectedStudent.subscription.subscription_plan === 'PREMIUM',
+            expired: selectedStudent.subscription.status === 'EXPIRED'
+          }"
+        >
+          {{ selectedStudent.subscription.status }} -
+          {{ selectedStudent.subscription.subscription_plan }}
         </div>
         <p *ngIf="selectedStudent.subscription.expiresAt">
-          Expires: {{ selectedStudent.subscription.expiresAt | date:'mediumDate' }}
+          Expires:
+          {{ selectedStudent.subscription.expiresAt | date: 'mediumDate' }}
         </p>
       </div>
 
@@ -182,35 +259,81 @@
           <input type="date" formControlName="expiryDate" />
         </div>
 
-        <!-- ✅ ALL SUBSCRIPTION PLANS - MATCHES BACKEND SCHEMA -->
         <div class="full">
           <label>Subscription Plan *</label>
           <select formControlName="accessType" class="plan-select">
             <option value="TRIAL">Trial Plan</option>
-            <!-- <option value="BASIC">Basic Plan</option>
-            <option value="PRO">Pro Plan</option> -->
             <option value="PREMIUM">Premium Plan</option>
           </select>
         </div>
 
         <div class="full">
           <label>Admin Notes</label>
-          <textarea formControlName="notes" placeholder="Reason for approval..."></textarea>
+          <textarea
+            formControlName="notes"
+            placeholder="Reason for approval..."
+          ></textarea>
         </div>
 
-        <!-- ✅ PLAN PREVIEW -->
+        <!-- PLAN PREVIEW -->
         <div class="plan-preview mt-4 p-3 bg-gray-50 rounded-lg">
           <h5>Will Grant:</h5>
           <div class="preview-plan">
             <strong>{{ getPreviewPlanName() }}</strong>
-            from {{ approveForm.value.startDate | date:'shortDate' }}
-            until {{ approveForm.value.expiryDate | date:'shortDate' }}
+            from {{ approveForm.value.startDate | date: 'shortDate' }}
+            until {{ approveForm.value.expiryDate | date: 'shortDate' }}
           </div>
         </div>
 
         <div class="modal-footer">
-          <!-- <button class="cancel-btn" (click)="closeAllModals()">Cancel</button> -->
-          <button class="approve-main" (click)="approveUser()" [disabled]="approveForm.invalid">
+          <button
+            class="approve-main"
+            (click)="approveUser()"
+            [disabled]="approveForm.invalid"
+          >
             Approve & Grant {{ getPreviewPlanName() }}
           </button>
         </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ================= EXTEND MODAL ================= -->
+<div class="modal-backdrop" *ngIf="showExtendModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Extend Subscription</h3>
+      <button class="close-btn" (click)="closeExtendModal()">✕</button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedStudent">
+      <div class="modal-user">
+        <div class="avatar big">
+          {{ selectedStudent.name?.charAt(0) }}
+        </div>
+        <div>
+          <h4>{{ selectedStudent.name }}</h4>
+          <p>{{ selectedStudent.email }}</p>
+        </div>
+      </div>
+
+      <form [formGroup]="extendForm" class="form-grid">
+        <div class="full">
+          <label>New Expiry Date *</label>
+          <input type="date" formControlName="expiryDate" />
+        </div>
+
+        <div class="modal-footer">
+          <button
+            class="approve-main"
+            (click)="extendSubscription()"
+            [disabled]="extendForm.invalid"
+          >
+            Extend Subscription
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
