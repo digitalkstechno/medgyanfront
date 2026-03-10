@@ -4,6 +4,7 @@ import { ContentService } from '../service/content.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-contentlist',
@@ -32,7 +33,8 @@ export class ContentlistComponent implements OnInit {
 
   constructor(
     private contentService: ContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private router : Router,
   ) {}
 
   ngOnInit() {
@@ -156,36 +158,59 @@ export class ContentlistComponent implements OnInit {
   // }
 
   playVideo(url: string) {
-  if (!url) return;
+    if (!url) return;
 
-  let embedUrl = '';
+    let embedUrl = '';
 
-  // ===== 1️⃣ VIMEO FIRST (PRIORITY) =====
-  if (url.includes('vimeo.com')) {
-    const match = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
-    const videoId = match ? match[1] : '';
+    // ===== 1️⃣ VIMEO FIRST (PRIORITY) =====
+    if (url.includes('vimeo.com')) {
+      const match = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
+      const videoId = match ? match[1] : '';
 
-    embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1`;
-  }
-
-  // ===== 2️⃣ YOUTUBE =====
-  else if (url.includes('youtube.com') || url.includes('youtu.be')) {
-    let videoId = '';
-
-    if (url.includes('youtu.be')) {
-      videoId = url.split('/').pop()?.split('?')[0] || '';
-    } else if (url.includes('watch?v=')) {
-      videoId = url.split('watch?v=')[1].split('&')[0];
+      embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1`;
     }
 
-    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-  }
+    // ===== 2️⃣ YOUTUBE =====
+    else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      let videoId = '';
 
-  this.selectedVideo =
-    this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
-}
+      if (url.includes('youtu.be')) {
+        videoId = url.split('/').pop()?.split('?')[0] || '';
+      } else if (url.includes('watch?v=')) {
+        videoId = url.split('watch?v=')[1].split('&')[0];
+      }
+
+      embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+
+    this.selectedVideo =
+      this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+  }
 
   closeVideo() {
     this.selectedVideo = null;
+  }
+
+  onEdit(item: any) {
+    // here later you can open a modal / navigate to edit screen with item data
+    console.log('Edit content', item._id);
+    this.router.navigate(['/medgyan/content', item._id])
+
+  }
+
+  onDelete(item: any) {
+    if (!confirm(`Are you sure you want to delete "${item.title}"?`)) {
+      return;
+    }
+
+    this.contentService.deleteContent(item._id).subscribe({
+      next: () => {
+        this.contents = this.contents.filter(c => c._id !== item._id);
+        this.applyFilters();
+      },
+      error: (err) => {
+        console.error('Delete error', err);
+      }
+    });
   }
 }

@@ -23,7 +23,7 @@ export class StudentlistComponent implements OnInit {
 
   searchControl = new FormControl('');
   searchTerm = '';
-
+    isApproving = false;
   // pagination state
   page = 1;
   limit = 10;
@@ -175,13 +175,17 @@ export class StudentlistComponent implements OnInit {
     return planNames[accessType] || 'Access';
   }
 
-  approveUser() {
+    approveUser() {
     if (this.approveForm.invalid || !this.selectedStudent) {
       console.error('Form invalid or no student selected');
       return;
     }
 
-    const selectedPlan = this.approveForm.value.accessType; // TRIAL, PREMIUM
+    if (this.isApproving) return; // extra safety
+
+    this.isApproving = true;
+
+    const selectedPlan = this.approveForm.value.accessType;
     const status = selectedPlan === 'TRIAL' ? 'TRIAL' : 'ACTIVE';
 
     const payload = {
@@ -211,19 +215,71 @@ export class StudentlistComponent implements OnInit {
           }
 
           alert(
-            `✅ ${this.getPreviewPlanName()} plan granted/updated successfully!`
+            `✅ ${this.getPreviewPlanName()} plan granted successfully!`
           );
           this.closeAllModals();
           this.loadStudents();
+          this.isApproving = false;
         },
         error: (error) => {
           console.error('❌ Approval failed:', error);
           alert(
             '❌ Approval failed: ' + (error.error?.error || 'Try again')
           );
+          this.isApproving = false;
         },
       });
   }
+
+  // approveUser() {
+  //   if (this.approveForm.invalid || !this.selectedStudent) {
+  //     console.error('Form invalid or no student selected');
+  //     return;
+  //   }
+
+  //   const selectedPlan = this.approveForm.value.accessType; // TRIAL, PREMIUM
+  //   const status = selectedPlan === 'TRIAL' ? 'TRIAL' : 'ACTIVE';
+
+  //   const payload = {
+  //     subscription: {
+  //       status,
+  //       subscription_plan: selectedPlan,
+  //       startDate: this.approveForm.value.startDate,
+  //       expiresAt: this.approveForm.value.expiryDate,
+  //     },
+  //     subscriptionLog: {
+  //       accessType: selectedPlan,
+  //       notes:
+  //         this.approveForm.value.notes || `Granted ${selectedPlan} plan`,
+  //       action: 'ADMIN_APPROVED',
+  //     },
+  //   };
+
+  //   this.studentservice
+  //     .updateStudent(this.selectedStudent._id, payload)
+  //     .subscribe({
+  //       next: (response: any) => {
+  //         const index = this.students.findIndex(
+  //           (s) => s._id === this.selectedStudent._id
+  //         );
+  //         if (index !== -1 && response.data) {
+  //           this.students[index] = response.data;
+  //         }
+
+  //         alert(
+  //           `✅ ${this.getPreviewPlanName()} plan granted/updated successfully!`
+  //         );
+  //         this.closeAllModals();
+  //         this.loadStudents();
+  //       },
+  //       error: (error) => {
+  //         console.error('❌ Approval failed:', error);
+  //         alert(
+  //           '❌ Approval failed: ' + (error.error?.error || 'Try again')
+  //         );
+  //       },
+  //     });
+  // }
 
   // ================= EXTEND =================
   openExtendModal() {

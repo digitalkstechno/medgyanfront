@@ -48,6 +48,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'content/:id',
+        loadComponent: () =>
+          import('./pages/content/addcontent/addcontent.component').then(
+            (m) => m.AddcontentComponent,
+          ),
+      },
+      {
         path: 'contentlist',
         loadComponent: () =>
           import('./pages/content/contentlist/contentlist.component').then(

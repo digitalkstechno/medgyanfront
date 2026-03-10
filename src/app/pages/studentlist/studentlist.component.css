@@ -607,7 +607,7 @@ textarea {
 
 @media (max-width: 480px) {
   .modal-box.small {
-    width: 95vw;
+    width: 95vw;  
     padding: 20px;
   }
 

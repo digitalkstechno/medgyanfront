@@ -25,7 +25,16 @@ export class ContentService {
 //   const params: any = { page, limit, ...filters };
 //   return this.http.get<any>(`${this.contentApi}`, { params });
 // }
+ getContentById(id: string) {
+    return this.http.get(`${this.contentApi}/${id}`);
+  }
+  updateContent(id: string, data: FormData) {
+    return this.http.put(`${this.contentApi}/${id}`, data);
+  }
 
+  deleteContent(id: string) {
+    return this.http.delete(`${this.contentApi}/${id}`);
+  }
 
 
 }

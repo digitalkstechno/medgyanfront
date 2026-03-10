@@ -20,7 +20,7 @@
     [class.blocked-card]="s.isBlocked"
   >
     <div class="student-header">
-      <div class="avatar">{{ s.name?.charAt(0) }}</div>
+      <!-- <div class="avatar">{{ s.name?.charAt(0) }}</div> -->
       <h6 class="form-label" *ngIf="s.userName">
         Student Username : {{ s.userName }}
       </h6>
@@ -185,6 +185,14 @@
         DeLink Student
       </button>
 
+       <!-- Delete -->
+      <!-- <button
+        *ngIf="!selectedStudent?.isBlocked"
+        class="action-btn danger"
+        (click)="deleteUser()"
+      >
+        Delete User
+      </button> -->
       <!-- Block -->
       <button
         *ngIf="!selectedStudent?.isBlocked"
@@ -193,6 +201,7 @@
       >
         Block User
       </button>
+
 
       <!-- Unblock -->
       <button

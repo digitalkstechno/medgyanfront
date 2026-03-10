@@ -341,3 +341,40 @@
   border-radius: 6px;
   cursor: pointer;
 }
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.btn-edit,
+.btn-delete {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Edit = subtle / secondary */
+.btn-edit {
+  background-color: #f3f4f6;      /* gray-100 */
+  color: #111827;                 /* gray-900 */
+  border-color: #d1d5db;          /* gray-300 */
+}
+
+.btn-edit:hover {
+  background-color: #e5e7eb;      /* gray-200 */
+}
+
+/* Delete = danger */
+.btn-delete {
+  background-color: #fee2e2;      /* red-100 */
+  color: #b91c1c;                 /* red-700 */
+  border-color: #fecaca;          /* red-200 */
+}
+
+.btn-delete:hover {
+  background-color: #fecaca;      /* red-200 */
+}

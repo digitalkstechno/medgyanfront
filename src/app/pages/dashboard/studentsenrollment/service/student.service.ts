@@ -52,7 +52,7 @@ updateProfile(studentId: string, studentdata: any): Observable<any> {
     return this.http.post(`${this.studentapi}/${studentId}/extend`, data);
   }
 
-  deleteStudent(studentId: string): Observable<any> {
+    deleteStudent(studentId: string): Observable<any> {
     return this.http.delete(`${this.studentapi}/${studentId}`);
   }
   blockStudent(studentId: string): Observable<any> {

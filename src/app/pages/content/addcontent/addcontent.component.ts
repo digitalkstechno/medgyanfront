@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { SHARED_IMPORTS } from '../../../constant/shared_imports';
 import { ContentService } from '../service/content.service';
 import { CategoryService } from '../../category/service/category.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-addcontent',
@@ -23,25 +23,33 @@ export class AddcontentComponent implements OnInit {
   categories: any[] = [];
   thumbnailFile: File | null = null;
 
-  plans = ['TRIAL',  'PREMIUM'];
+  plans = ['TRIAL', 'PREMIUM'];
   // plans = ['TRIAL', 'BASIC', 'PRO', 'PREMIUM'];
+
+  isEditMode = false;
+  contentId: string | null = null;
+  existingThumbnail: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private contentService: ContentService,
     private categoryService: CategoryService,
     private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+
     this.contentForm.get('contentUrl')?.valueChanges.subscribe((url) => {
       const id = this.extractVimeoId(url);
       this.contentForm.patchValue({
         contentId: id,
       });
     });
+
     this.loadCategories();
+    this.checkEditMode();
   }
 
   /* ================= FORM INIT ================= */
@@ -75,6 +83,39 @@ export class AddcontentComponent implements OnInit {
   loadCategories() {
     this.categoryService.getCategories().subscribe((res: any) => {
       this.categories = res;
+    });
+  }
+
+  /* ================= EDIT MODE CHECK ================= */
+
+  checkEditMode() {
+    this.contentId = this.route.snapshot.paramMap.get('id');
+    if (this.contentId) {
+      this.isEditMode = true;
+      this.loadContentById(this.contentId);
+      // in edit mode thumbnail not strictly required if already exists
+      this.contentForm.get('thumbnail')?.clearValidators();
+      this.contentForm.get('thumbnail')?.updateValueAndValidity();
+    }
+  }
+
+  loadContentById(id: string) {
+    this.contentService.getContentById(id).subscribe((res: any) => {
+      const data = res.content || res; // depends on your API structure
+
+      this.existingThumbnail = data.thumbnail || null;
+
+      this.contentForm.patchValue({
+        title: data.title,
+        description: data.description,
+        type: data.type || 'VIDEO',
+        contentUrl: data.contentUrl,
+        contentId: data.contentId || this.extractVimeoId(data.contentUrl),
+        category: data.category || '',
+        allowedPlans: data.allowedPlans || [],
+        isFree: data.isFree ?? false,
+        isPublished: data.isPublished ?? true,
+      });
     });
   }
 
@@ -117,15 +158,17 @@ export class AddcontentComponent implements OnInit {
     const match = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
     return match ? match[1] : '';
   }
+
   /* ================= SUBMIT ================= */
 
   onSubmit() {
+     console.log("i am here ")
     if (this.contentForm.invalid) {
       this.contentForm.markAllAsTouched();
       console.log('Form Invalid:', this.contentForm.errors);
       return;
     }
-
+   console.log("i am here ")
     const formData = new FormData();
 
     Object.entries(this.contentForm.value).forEach(([key, value]) => {
@@ -143,16 +186,29 @@ export class AddcontentComponent implements OnInit {
       formData.append('thumbnail', this.thumbnailFile);
     }
 
-    this.contentService.createContent(formData).subscribe({
-      next: () => {
-        alert('Content Added Successfully');
-        this.contentForm.reset();
-        this.router.navigateByUrl('/medgyan/contentlist');
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error Adding Content');
-      },
-    });
+    if (!this.isEditMode) {
+      this.contentService.createContent(formData).subscribe({
+        next: () => {
+          alert('Content Added Successfully');
+          this.contentForm.reset();
+          this.router.navigateByUrl('/medgyan/contentlist');
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error Adding Content');
+        },
+      });
+    } else if (this.contentId) {
+      this.contentService.updateContent(this.contentId, formData).subscribe({
+        next: () => {
+          alert('Content Updated Successfully');
+          this.router.navigateByUrl('/medgyan/contentlist');
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error Updating Content');
+        },
+      });
+    }
   }
 }
