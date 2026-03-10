@@ -1,10 +1,6 @@
 <div class="relative max-w-md w-full hidden md:block mt-3">
-  <input
-    class="w-full pl-10 pr-4 py-2 border-none rounded-xl text-sm focus:ring-2 transition-all inputsearch"
-    [formControl]="searchControl"
-    placeholder="Search Students by Name , Username..."
-    type="text"
-  />
+  <input class="w-full pl-10 pr-4 py-2 border-none rounded-xl text-sm focus:ring-2 transition-all inputsearch"
+    [formControl]="searchControl" placeholder="Search Students by Name , Username..." type="text" />
 </div>
 
 <hr class="mt-3" />
@@ -13,12 +9,7 @@
   <h2 class="page-title">Student Management</h2>
 
   <!-- STUDENT LIST -->
-  <div
-    class="student-card"
-    *ngFor="let s of students"
-    (click)="openActionModal(s)"
-    [class.blocked-card]="s.isBlocked"
-  >
+  <div class="student-card" *ngFor="let s of students" (click)="openActionModal(s)" [class.blocked-card]="s.isBlocked">
     <div class="student-header">
       <!-- <div class="avatar">{{ s.name?.charAt(0) }}</div> -->
       <h6 class="form-label" *ngIf="s.userName">
@@ -35,10 +26,15 @@
       </div>
 
       <div class="row">
-        <p class="col-md-6" *ngIf="s.deviceId">
+        <p class="col-md-6" *ngIf="s.device?.deviceId || s.deviceId">
           Student Device Id:
-          {{ s.deviceId ? (s.deviceId | slice: 0 : 8) + '...' : '' }}
+          {{
+          (s.device?.deviceId || s.deviceId)
+          ? ((s.device?.deviceId || s.deviceId) | slice: 0 : 8) + '...'
+          : ''
+          }}
         </p>
+
 
         <p class="col-md-6" *ngIf="s.contact_no">
           Student Mobile Number: {{ s.contact_no }}
@@ -51,20 +47,14 @@
       </span>
 
       <!-- APPROVE BUTTON -->
-      <button
-        class="approve-btn"
-        (click)="openApproveModal(s); $event.stopPropagation()"
-        [disabled]="s.isBlocked"
-      >
+      <button class="approve-btn" (click)="openApproveModal(s); $event.stopPropagation()"
+        [disabled]="s.isBlocked || isApproving">
         Approve
       </button>
     </div>
 
     <!-- SUBSCRIPTION INFO (HIDE IF BLOCKED) -->
-    <div
-      class="student-meta"
-      *ngIf="!s.isBlocked && s.subscription?.startDate"
-    >
+    <div class="student-meta" *ngIf="!s.isBlocked && s.subscription?.startDate">
       <!-- STATUS -->
       <span class="badge trial" *ngIf="s.subscription?.status === 'TRIAL'">
         Trial Plan
@@ -87,28 +77,15 @@
 
   <!-- PAGINATION BAR -->
   <div class="pagination-wrapper" *ngIf="pages > 1">
-    <button
-      class="btn btn-sm"
-      [disabled]="!canPrev()"
-      (click)="prevPage()"
-    >
+    <button class="btn btn-sm" [disabled]="!canPrev()" (click)="prevPage()">
       Prev
     </button>
 
-    <button
-      class="btn btn-sm"
-      *ngFor="let p of pageArray"
-      [class.active]="page === p"
-      (click)="goToPage(p)"
-    >
+    <button class="btn btn-sm" *ngFor="let p of pageArray" [class.active]="page === p" (click)="goToPage(p)">
       {{ p }}
     </button>
 
-    <button
-      class="btn btn-sm"
-      [disabled]="!canNext()"
-      (click)="nextPage()"
-    >
+    <button class="btn btn-sm" [disabled]="!canNext()" (click)="nextPage()">
       Next
     </button>
 
@@ -167,13 +144,10 @@
       <span class="days" *ngIf="selectedStudent?.subscription?.startDate">
         {{ getStartLabel(selectedStudent?.subscription?.startDate) }}
       </span>
-      <span
-        *ngIf="
+      <span *ngIf="
           selectedStudent?.subscription?.startDate &&
           selectedStudent?.subscription?.expiresAt
-        "
-        >&</span
-      >
+        ">&</span>
       <span class="days" *ngIf="selectedStudent?.subscription?.expiresAt">
         Your {{ selectedStudent?.subscription?.subscription_plan }} version
         {{ getExpiryLabel(selectedStudent?.subscription?.expiresAt) }}
@@ -185,7 +159,7 @@
         DeLink Student
       </button>
 
-       <!-- Delete -->
+      <!-- Delete -->
       <!-- <button
         *ngIf="!selectedStudent?.isBlocked"
         class="action-btn danger"
@@ -194,21 +168,13 @@
         Delete User
       </button> -->
       <!-- Block -->
-      <button
-        *ngIf="!selectedStudent?.isBlocked"
-        class="action-btn danger"
-        (click)="blockUser()"
-      >
+      <button *ngIf="!selectedStudent?.isBlocked" class="action-btn danger" (click)="blockUser()">
         Block User
       </button>
 
 
       <!-- Unblock -->
-      <button
-        *ngIf="selectedStudent?.isBlocked"
-        class="action-btn extend"
-        (click)="UnblockUser()"
-      >
+      <button *ngIf="selectedStudent?.isBlocked" class="action-btn extend" (click)="UnblockUser()">
         Unblock User
       </button>
     </div>
@@ -230,14 +196,11 @@
           Current Plan:
           {{ selectedStudent.subscription.subscription_plan || 'None' }}
         </h4>
-        <div
-          class="status-badge"
-          [ngClass]="{
+        <div class="status-badge" [ngClass]="{
             trial: selectedStudent.subscription.subscription_plan === 'TRIAL',
             premium: selectedStudent.subscription.subscription_plan === 'PREMIUM',
             expired: selectedStudent.subscription.status === 'EXPIRED'
-          }"
-        >
+          }">
           {{ selectedStudent.subscription.status }} -
           {{ selectedStudent.subscription.subscription_plan }}
         </div>
@@ -278,10 +241,7 @@
 
         <div class="full">
           <label>Admin Notes</label>
-          <textarea
-            formControlName="notes"
-            placeholder="Reason for approval..."
-          ></textarea>
+          <textarea formControlName="notes" placeholder="Reason for approval..."></textarea>
         </div>
 
         <!-- PLAN PREVIEW -->
@@ -295,13 +255,11 @@
         </div>
 
         <div class="modal-footer">
-          <button
-            class="approve-main"
-            (click)="approveUser()"
-            [disabled]="approveForm.invalid"
-          >
-            Approve & Grant {{ getPreviewPlanName() }}
+          <button class="approve-main" type="button" (click)="approveUser()"
+            [disabled]="approveForm.invalid || isApproving">
+            {{ isApproving ? 'Processing...' : ('Approve & Grant ' + getPreviewPlanName()) }}
           </button>
+
         </div>
       </form>
     </div>
@@ -334,11 +292,7 @@
         </div>
 
         <div class="modal-footer">
-          <button
-            class="approve-main"
-            (click)="extendSubscription()"
-            [disabled]="extendForm.invalid"
-          >
+          <button class="approve-main" (click)="extendSubscription()" [disabled]="extendForm.invalid">
             Extend Subscription
           </button>
         </div>

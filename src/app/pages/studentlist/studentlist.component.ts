@@ -23,7 +23,7 @@ export class StudentlistComponent implements OnInit {
 
   searchControl = new FormControl('');
   searchTerm = '';
-    isApproving = false;
+  isApproving = false;
   // pagination state
   page = 1;
   limit = 10;
@@ -41,7 +41,7 @@ export class StudentlistComponent implements OnInit {
 
   constructor(
     private studentservice: StudentService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit() {
@@ -175,13 +175,13 @@ export class StudentlistComponent implements OnInit {
     return planNames[accessType] || 'Access';
   }
 
-    approveUser() {
+  approveUser() {
     if (this.approveForm.invalid || !this.selectedStudent) {
       console.error('Form invalid or no student selected');
       return;
     }
 
-    if (this.isApproving) return; // extra safety
+    if (this.isApproving) return;
 
     this.isApproving = true;
 
@@ -197,8 +197,7 @@ export class StudentlistComponent implements OnInit {
       },
       subscriptionLog: {
         accessType: selectedPlan,
-        notes:
-          this.approveForm.value.notes || `Granted ${selectedPlan} plan`,
+        notes: this.approveForm.value.notes || `Granted ${selectedPlan} plan`,
         action: 'ADMIN_APPROVED',
       },
     };
@@ -208,24 +207,20 @@ export class StudentlistComponent implements OnInit {
       .subscribe({
         next: (response: any) => {
           const index = this.students.findIndex(
-            (s) => s._id === this.selectedStudent._id
+            (s) => s._id === this.selectedStudent._id,
           );
           if (index !== -1 && response.data) {
             this.students[index] = response.data;
           }
 
-          alert(
-            `✅ ${this.getPreviewPlanName()} plan granted successfully!`
-          );
+          alert(`✅ ${this.getPreviewPlanName()} plan granted successfully!`);
           this.closeAllModals();
           this.loadStudents();
           this.isApproving = false;
         },
         error: (error) => {
           console.error('❌ Approval failed:', error);
-          alert(
-            '❌ Approval failed: ' + (error.error?.error || 'Try again')
-          );
+          alert('❌ Approval failed: ' + (error.error?.error || 'Try again'));
           this.isApproving = false;
         },
       });
@@ -300,8 +295,7 @@ export class StudentlistComponent implements OnInit {
       subscription: {
         status: 'ACTIVE',
         subscription_plan:
-          this.selectedStudent.subscription?.subscription_plan ||
-          'PREMIUM',
+          this.selectedStudent.subscription?.subscription_plan || 'PREMIUM',
         startDate:
           this.selectedStudent.subscription?.startDate ||
           new Date().toISOString().split('T')[0],
@@ -309,8 +303,7 @@ export class StudentlistComponent implements OnInit {
       },
       subscriptionLog: {
         accessType:
-          this.selectedStudent.subscription?.subscription_plan ||
-          'PREMIUM',
+          this.selectedStudent.subscription?.subscription_plan || 'PREMIUM',
         notes: 'Subscription extended by admin',
         action: 'EXTENDED',
       },
@@ -326,9 +319,7 @@ export class StudentlistComponent implements OnInit {
         },
         error: (error) => {
           console.error('❌ Extend failed:', error);
-          alert(
-            'Extension failed: ' + (error.error?.error || 'Unknown error')
-          );
+          alert('Extension failed: ' + (error.error?.error || 'Unknown error'));
         },
       });
   }
@@ -429,9 +420,7 @@ export class StudentlistComponent implements OnInit {
   getDaysLeft(expiryDate: string): number {
     const today = new Date().getTime();
     const expiry = new Date(expiryDate).getTime();
-    const diff = Math.ceil(
-      (expiry - today) / (1000 * 60 * 60 * 24)
-    );
+    const diff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
     return diff < 0 ? 0 : diff;
   }
 
